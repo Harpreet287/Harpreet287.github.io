@@ -5,7 +5,36 @@
     <link>https://harpreet287.github.io/</link>
     <description>Recent content on Harpreet&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 10 Dec 2023 19:14:17 +0530</lastBuildDate>
     <atom:link href="https://harpreet287.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Migrate to Hugo from Jekyll</title>
+      <link>https://harpreet287.github.io/_about/</link>
+      <pubDate>Mon, 10 Mar 2014 00:00:00 +0000</pubDate>
+      <guid>https://harpreet287.github.io/_about/</guid>
+      <description>Move static content to static # Jekyll has a rule that any directory not starting with _ will be copied as-is to the _site output. Hugo keeps all static content under static. You should therefore move it all there. With Jekyll, something that looked like&#xA;▾ &amp;lt;root&amp;gt;/ ▾ images/ logo.png should become&#xA;▾ &amp;lt;root&amp;gt;/ ▾ static/ ▾ images/ logo.png Additionally, you&amp;rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static.</description>
+    </item>
+    <item>
+      <title>First_one</title>
+      <link>https://harpreet287.github.io/en/sample/first_one/</link>
+      <pubDate>Sun, 10 Dec 2023 19:14:17 +0530</pubDate>
+      <guid>https://harpreet287.github.io/en/sample/first_one/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>About</title>
+      <link>https://harpreet287.github.io/page/about/</link>
+      <pubDate>Sun, 10 Dec 2023 18:49:33 +0530</pubDate>
+      <guid>https://harpreet287.github.io/page/about/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>About Me</title>
+      <link>https://harpreet287.github.io/docs/first_one/</link>
+      <pubDate>Sun, 10 Dec 2023 18:48:45 +0530</pubDate>
+      <guid>https://harpreet287.github.io/docs/first_one/</guid>
+      <description>Greetings! 👋 # Introduction # Greetings, I&amp;rsquo;m Harpreet Singh, a Computer Science major at IIITH, finished my third semester. Having recently completed courses like CS3.301 (Operating Systems and Networks) and CS1.302 (Automata Theory), I find myself intrigued by the practical applications of Computer Science. Witnessing theories come to life in computer systems and algorithms has been truly captivating.&#xA;What to Expect. # As someone with dynamic interests, my focus shifts based on current happenings.</description>
+    </item>
   </channel>
 </rss>
