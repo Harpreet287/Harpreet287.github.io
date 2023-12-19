@@ -6,29 +6,8 @@
     <description>Recent content on Harpreet Singh</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 10 Dec 2023 19:14:17 +0530</lastBuildDate>
+    <lastBuildDate>Sun, 10 Dec 2023 18:48:45 +0530</lastBuildDate>
     <atom:link href="https://harpreet287.github.io/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Migrate to Hugo from Jekyll</title>
-      <link>https://harpreet287.github.io/_about/</link>
-      <pubDate>Mon, 10 Mar 2014 00:00:00 +0000</pubDate>
-      <guid>https://harpreet287.github.io/_about/</guid>
-      <description>Move static content to static # Jekyll has a rule that any directory not starting with _ will be copied as-is to the _site output. Hugo keeps all static content under static. You should therefore move it all there. With Jekyll, something that looked like&#xA;▾ &amp;lt;root&amp;gt;/ ▾ images/ logo.png should become&#xA;▾ &amp;lt;root&amp;gt;/ ▾ static/ ▾ images/ logo.png Additionally, you&amp;rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static.</description>
-    </item>
-    <item>
-      <title>First_one</title>
-      <link>https://harpreet287.github.io/en/sample/first_one/</link>
-      <pubDate>Sun, 10 Dec 2023 19:14:17 +0530</pubDate>
-      <guid>https://harpreet287.github.io/en/sample/first_one/</guid>
-      <description> Scheduling policy analysis (performance modelling of computer systems) Makefile tutorial Bias variance tradeoff </description>
-    </item>
-    <item>
-      <title>About</title>
-      <link>https://harpreet287.github.io/page/about/</link>
-      <pubDate>Sun, 10 Dec 2023 18:49:33 +0530</pubDate>
-      <guid>https://harpreet287.github.io/page/about/</guid>
-      <description></description>
-    </item>
     <item>
       <title>About Me</title>
       <link>https://harpreet287.github.io/docs/first_one/</link>
@@ -38,10 +17,10 @@
     </item>
     <item>
       <title></title>
-      <link>https://harpreet287.github.io/docs/lc/weekly_contest/getsum/</link>
+      <link>https://harpreet287.github.io/docs/lc/getsum/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://harpreet287.github.io/docs/lc/weekly_contest/getsum/</guid>
-      <description>class Solution { public: int getSum(int a, int b) { if (a) return getSum((a &amp;amp; b) &amp;lt;&amp;lt; 1, a ^ b); return b; } }; </description>
+      <guid>https://harpreet287.github.io/docs/lc/getsum/</guid>
+      <description>Leetcode 371 # Sum of Two Integers # Problem Statement:&#xA;Given two integers a and b, return the sum of the two integers without using the operators + and -.&#xA;Logic: We would be treating a and b in binary form for understanding bit operations. First bit of sum calculated by xor(0^1, 1^0, 0^0, 1^1), but for the addition such as 1+1 = 10 we must have some carry, which can be found by &amp;amp; operator between the two numbers.</description>
     </item>
   </channel>
 </rss>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Leetcode 371 # Sum of Two Integers # Problem Statement:
+Given two integers a and b, return the sum of the two integers without using the operators &#43; and -.
+Logic: We would be treating a and b in binary form for understanding bit operations. First bit of sum calculated by xor(0^1, 1^0, 0^0, 1^1), but for the addition such as 1&#43;1 = 10 we must have some carry, which can be found by &amp; operator between the two numbers.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="" />
+<meta property="og:description" content="Leetcode 371 # Sum of Two Integers # Problem Statement:
+Given two integers a and b, return the sum of the two integers without using the operators &#43; and -.
+Logic: We would be treating a and b in binary form for understanding bit operations. First bit of sum calculated by xor(0^1, 1^0, 0^0, 1^1), but for the addition such as 1&#43;1 = 10 we must have some carry, which can be found by &amp; operator between the two numbers." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://harpreet287.github.io/docs/lc/getsum/" /><meta property="article:section" content="docs" />
+
+
+
+<title>Get Sum | Harpreet Singh</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/favicon.png" >
+<link rel="stylesheet" href="/book.min.33a48f5432973b8ff9a82679d9e45d67f2c15d4399bd2829269455cfe390b5e8.css" integrity="sha256-M6SPVDKXO4/5qCZ52eRdZ/LBXUOZvSgpJpRVz&#43;OQteg=" crossorigin="anonymous">
+  <script defer src="/flexsearch.min.js"></script>
+  <script defer src="/en.search.min.190dd0979c949f111b68749370a29f2df7038e5a8e3d023290c0ca2f8e3bbd56.js" integrity="sha256-GQ3Ql5yUnxEbaHSTcKKfLfcDjlqOPQIykMDKL447vVY=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Harpreet Singh</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-135194338c24fdbc4ec34431f5d6bb6e" class="toggle" checked />
+    <label for="section-135194338c24fdbc4ec34431f5d6bb6e" class="flex justify-between">
+      <a role="button" class="">Leetcode</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/lc/getsum/" class="active">Get Sum</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/first_one/" class="">About Me</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Get Sum</strong>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#sum-of-two-integers">Sum of Two Integers</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="leetcode-371">
+  Leetcode 371
+  <a class="anchor" href="#leetcode-371">#</a>
+</h1>
+<h2 id="sum-of-two-integers">
+  Sum of Two Integers
+  <a class="anchor" href="#sum-of-two-integers">#</a>
+</h2>
+<p>Problem Statement:</p>
+<p><code>Given two integers a and b, return the sum of the two integers without using the operators + and -.</code></p>
+<p><code>Logic</code>:
+We would be treating a and b in binary form for understanding bit operations.
+First bit of <code>sum</code> calculated by <code>xor(0^1, 1^0, 0^0, 1^1)</code>, but for the addition such as 1+1 = 10 we must have some <code>carry</code>, which can be found by <code>&amp;</code> operator between the two numbers. Also note that this approach takes count into the 3 bit addition in case of carry (1^1^1=1 and 1&amp;1&amp;1 = 1).
+We proceed as follows</p>
+<pre tabindex="0"><code>procedure ADD(a, b):
+    if a:
+        carry = a AND b
+        sum = a XOR b
+        return ADD(carry &lt;&lt; 1, sum)
+    else:
+        return sum
+</code></pre><p><code>Time Complexity:  O(log(max(a, b)))</code> where &ldquo;log&rdquo; is the logarithm base 2.
+This is because in each recursive call, the size of the input (represented by the maximum of &lsquo;a&rsquo; and &lsquo;b&rsquo;) is reduced by half due to the left shift (carry &laquo; 1).</p>
+<p><code>Space Complexity: O(log(max(a,b)))</code>
+This is because each recursive call consumes space on the call stack, and the maximum depth of the recursion is determined by the number of bits needed to represent the larger of the two numbers, &lsquo;a&rsquo; or &lsquo;b&rsquo;.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> { <span style="color:#75715e">// Working c++ code
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> getSum(<span style="color:#66d9ef">int</span> a, <span style="color:#66d9ef">int</span> b) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (a)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> getSum((a <span style="color:#f92672">&amp;</span> b) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">1</span>, a <span style="color:#f92672">^</span> b);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> b;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div></article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#sum-of-two-integers">Sum of Two Integers</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
