@@ -20,7 +20,7 @@
       <link>https://harpreet287.github.io/en/sample/first_one/</link>
       <pubDate>Sun, 10 Dec 2023 19:14:17 +0530</pubDate>
       <guid>https://harpreet287.github.io/en/sample/first_one/</guid>
-      <description></description>
+      <description> Scheduling policy analysis (performance modelling of computer systems) Makefile tutorial Bias variance tradeoff </description>
     </item>
     <item>
       <title>About</title>
@@ -35,6 +35,13 @@
       <pubDate>Sun, 10 Dec 2023 18:48:45 +0530</pubDate>
       <guid>https://harpreet287.github.io/docs/first_one/</guid>
       <description>Greetings! 👋 # Introduction # Greetings, I&amp;rsquo;m Harpreet Singh, a Computer Science major at IIITH, finished my third semester. Having recently completed courses like CS3.301 (Operating Systems and Networks) and CS1.302 (Automata Theory), I find myself intrigued by the practical applications of Computer Science. Witnessing theories come to life in computer systems and algorithms has been truly captivating.&#xA;What to Expect. # As someone with dynamic interests, my focus shifts based on current happenings.</description>
+    </item>
+    <item>
+      <title></title>
+      <link>https://harpreet287.github.io/docs/lc/weekly_contest/getsum/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://harpreet287.github.io/docs/lc/weekly_contest/getsum/</guid>
+      <description>class Solution { public: int getSum(int a, int b) { if (a) return getSum((a &amp;amp; b) &amp;lt;&amp;lt; 1, a ^ b); return b; } }; </description>
     </item>
   </channel>
 </rss>

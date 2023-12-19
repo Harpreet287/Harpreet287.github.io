@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Weekly Contest on Harpreet Singh</title>
+    <link>https://harpreet287.github.io/docs/lc/weekly_contest/</link>
+    <description>Recent content in Weekly Contest on Harpreet Singh</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="https://harpreet287.github.io/docs/lc/weekly_contest/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title></title>
+      <link>https://harpreet287.github.io/docs/lc/weekly_contest/getsum/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://harpreet287.github.io/docs/lc/weekly_contest/getsum/</guid>
+      <description>class Solution { public: int getSum(int a, int b) { if (a) return getSum((a &amp;amp; b) &amp;lt;&amp;lt; 1, a ^ b); return b; } }; </description>
+    </item>
+  </channel>
+</rss>
