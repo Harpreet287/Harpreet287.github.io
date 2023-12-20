@@ -17,6 +17,13 @@
     </item>
     <item>
       <title></title>
+      <link>https://harpreet287.github.io/docs/lc/8/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://harpreet287.github.io/docs/lc/8/</guid>
+      <description>8. String to Integer (atoi)[yellow(medium)] # Problem Statement: # Implement the myAtoi(string s) function, which converts a string to a 32-bit signed integer (similar to C/C++&amp;#39;s atoi function). The algorithm for myAtoi(string s) is as follows: Read in and ignore any leading whitespace. Check if the next character (if not already at the end of the string) is &amp;#39;-&amp;#39; or &amp;#39;+&amp;#39;. Read this character in if it is either. This determines if the final result is negative or positive respectively.</description>
+    </item>
+    <item>
+      <title></title>
       <link>https://harpreet287.github.io/docs/lc/getsum/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>https://harpreet287.github.io/docs/lc/getsum/</guid>
