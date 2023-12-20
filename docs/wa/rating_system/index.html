@@ -3,17 +3,33 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Embarking on a Journey into the World of Computing!">
+<meta name="description" content="Chess rating system # Introduction # A chess rating system is a system used in chess to estimate the strength of a player, based on their performance versus other players. They are used by organisations like FIDE, English Chess Federation and online chess websites like chess.com, Lichess only to name a few. In general for a player, their strength is determined by the rating they have, higher rating indicates more proficiency in the sport.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="About Me" />
-<meta property="og:description" content="Embarking on a Journey into the World of Computing!" />
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="Rating Algorithm in chess" />
+<meta property="og:description" content="Chess rating system # Introduction # A chess rating system is a system used in chess to estimate the strength of a player, based on their performance versus other players. They are used by organisations like FIDE, English Chess Federation and online chess websites like chess.com, Lichess only to name a few. In general for a player, their strength is determined by the rating they have, higher rating indicates more proficiency in the sport." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://harpreet287.github.io/docs/first_one/" /><meta property="article:section" content="docs" />
-<meta property="article:published_time" content="2023-12-10T18:48:45+05:30" />
-<meta property="article:modified_time" content="2023-12-10T18:48:45+05:30" />
+<meta property="og:url" content="https://harpreet287.github.io/docs/wa/rating_system/" /><meta property="article:section" content="docs" />
 
-<title>About Me | Harpreet Singh</title>
+
+
+<title>Rating Algorithm in chess | Harpreet Singh</title>
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+  </head>
+  ...
+</html>
+
 
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" href="/favicon.png" >
@@ -71,7 +87,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-7e54a69bd89898e62c5d07072e60fb22" class="toggle"  />
+    <input type="checkbox" id="section-7e54a69bd89898e62c5d07072e60fb22" class="toggle" checked />
     <label for="section-7e54a69bd89898e62c5d07072e60fb22" class="flex justify-between">
       <a role="button" class="">Weekly Algorithm</a>
     </label>
@@ -87,7 +103,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/docs/wa/rating_system/" class="">Rating Algorithm in chess</a>
+    <a href="/docs/wa/rating_system/" class="active">Rating Algorithm in chess</a>
   
 
         </li>
@@ -152,7 +168,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/docs/first_one/" class="active">About Me</a>
+    <a href="/docs/first_one/" class="">About Me</a>
   
 
         </li>
@@ -194,7 +210,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>About Me</strong>
+  <strong>Rating Algorithm in chess</strong>
 
   <label for="toc-control">
     
@@ -211,8 +227,7 @@ https://github.com/alex-shpak/hugo-book
 <nav id="TableOfContents">
   <ul>
     <li><a href="#introduction">Introduction</a></li>
-    <li><a href="#what-to-expect">What to Expect.</a></li>
-    <li><a href="#road-ahead">Road Ahead</a></li>
+    <li><a href="#the-elo-rating-system">The Elo Rating System</a></li>
   </ul>
 </nav>
 
@@ -225,28 +240,23 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="greetings-">
-  Greetings! 👋
-  <a class="anchor" href="#greetings-">#</a>
+  <article class="markdown book-article"><h1 id="chess-rating-system">
+  Chess rating system
+  <a class="anchor" href="#chess-rating-system">#</a>
 </h1>
 <h2 id="introduction">
   Introduction
   <a class="anchor" href="#introduction">#</a>
 </h2>
-<p>Greetings, I&rsquo;m Harpreet Singh, a Computer Science major at IIITH, finished my third semester. Having recently completed courses like CS3.301 (Operating Systems and Networks) and CS1.302 (Automata Theory), I find myself intrigued by the practical applications of Computer Science. Witnessing theories come to life in computer systems and algorithms has been truly captivating.</p>
-<h2 id="what-to-expect">
-  What to Expect.
-  <a class="anchor" href="#what-to-expect">#</a>
+<p>A chess rating system is a system used in chess to estimate the strength of a player, based on their performance versus other players. They are used by organisations like FIDE, English Chess Federation and online chess websites like chess.com, Lichess only to name a few. In general for a player, their strength is determined by the rating they have, higher rating indicates more proficiency in the sport.</p>
+<p>If they play good against their opponent with higher rating, then their own rating should be increased as well. But how exactly do we give the rating as in attempt to consolidate all the factors into a single number, we are likely to miss some aspects. We therefore try to make it as fair as it should. That&rsquo;s why the most commonly used rating is the <code>Elo rating system</code> invented by Arpad Elo. Some can choose to modify the Elo rating system for their own need like USCF uses USCF system in which <code>K factor</code> is varies for each match and player is given bonus points for the superior performance in the tournament.
+So let&rsquo;s first understand what is the Elo rating system in easy way.</p>
+<h2 id="the-elo-rating-system">
+  The Elo Rating System
+  <a class="anchor" href="#the-elo-rating-system">#</a>
 </h2>
-<p>As someone with dynamic interests, my focus shifts based on current happenings. Primarily, my curiosity centers around the developments in the field of computer science.
-So this is a place where I would not only share algorithms and data structure problems but also research articles in the tech domain. Rest assured, these articles won&rsquo;t be your typical run-of-the-mill reads—they&rsquo;re designed to captivate and inspire 😉.</p>
-<h2 id="road-ahead">
-  Road Ahead
-  <a class="anchor" href="#road-ahead">#</a>
-</h2>
-<p>It&rsquo;s just the beginning, and I would keep updating my daily learnings, challenges, and discoveries regularly. I hope that, in turn, you find something new and interesting with each visit. I won&rsquo;t fail the people who give their extremely valuable time and attention on this page!</p>
-<p>Thank you for stopping by, see you on the first post!</p>
-<p>#StayCurious 🚀</p>
+<p>Now before we go further, first we need to know some things like what is the expected score and what is an actual score of the match. For instance, a player of 2500 plays 16 matches and wins 10, and draws 1, his actual score is 10.5(1 for each win and 0.5 for each draw), however expected score is calculated through the probability of the winning which is</p>
+<p>$$P1 = \frac{1.0}{1.0 + 10^{\frac{{\text{{rating1}} - \text{{rating2}}}}{400}}}$$</p>
 </article>
  
       
@@ -289,8 +299,7 @@ So this is a place where I would not only share algorithms and data structure pr
 <nav id="TableOfContents">
   <ul>
     <li><a href="#introduction">Introduction</a></li>
-    <li><a href="#what-to-expect">What to Expect.</a></li>
-    <li><a href="#road-ahead">Road Ahead</a></li>
+    <li><a href="#the-elo-rating-system">The Elo Rating System</a></li>
   </ul>
 </nav>
 
