@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Miscellaneous Problems on Harpreet Singh</title>
+    <link>https://harpreet287.github.io/docs/misc/</link>
+    <description>Recent content in Miscellaneous Problems on Harpreet Singh</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="https://harpreet287.github.io/docs/misc/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Minimum flips to make xy string</title>
+      <link>https://harpreet287.github.io/docs/misc/minflips/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://harpreet287.github.io/docs/misc/minflips/</guid>
+      <description>1. Minimum flips to make xy string # Problem Statement # You are given a string consisting of the letters x and y, such as xyxxxyxyy. In addition, you have an operation called flip, which changes a single x to y or vice versa. Determine how many times you would need to apply this operation to ensure that all x&amp;rsquo;s come before all y&amp;rsquo;s. In the preceding example, it suffices to flip the second and sixth characters, so you should return 2.</description>
+    </item>
+  </channel>
+</rss>
