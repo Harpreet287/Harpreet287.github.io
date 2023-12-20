@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Chess rating system # Introduction # A chess rating system is a system used in chess to estimate the strength of a player, based on their performance versus other players. They are used by organisations like FIDE, English Chess Federation and online chess websites like chess.com, Lichess only to name a few. In general for a player, their strength is determined by the rating they have, higher rating indicates more proficiency in the sport.">
+<meta name="description" content="Chess rating system # Introduction # A chess rating system is a system used in chess to estimate the strength of a player, based on their performance versus other players. They are used by organisations like FIDE, English Chess Federation and online chess websites like chess.com, Lichess only to name a few. In general for a player, their strength is determined by the rating, higher rating indicates more proficiency.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="Rating Algorithm in chess" />
-<meta property="og:description" content="Chess rating system # Introduction # A chess rating system is a system used in chess to estimate the strength of a player, based on their performance versus other players. They are used by organisations like FIDE, English Chess Federation and online chess websites like chess.com, Lichess only to name a few. In general for a player, their strength is determined by the rating they have, higher rating indicates more proficiency in the sport." />
+<meta property="og:description" content="Chess rating system # Introduction # A chess rating system is a system used in chess to estimate the strength of a player, based on their performance versus other players. They are used by organisations like FIDE, English Chess Federation and online chess websites like chess.com, Lichess only to name a few. In general for a player, their strength is determined by the rating, higher rating indicates more proficiency." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://harpreet287.github.io/docs/wa/rating_system/" /><meta property="article:section" content="docs" />
 
@@ -26,6 +26,16 @@
     
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
         onload="renderMathInElement(document.body);"></script>
+        <script>
+          document.addEventListener("DOMContentLoaded", function() {
+              renderMathInElement(document.body, {
+                  delimiters: [
+                      {left: "$$", right: "$$", display: true},
+                      {left: "$", right: "$", display: false}
+                  ]
+              });
+          });
+      </script>
   </head>
   ...
 </html>
@@ -35,7 +45,7 @@
 <link rel="icon" href="/favicon.png" >
 <link rel="stylesheet" href="/book.min.33a48f5432973b8ff9a82679d9e45d67f2c15d4399bd2829269455cfe390b5e8.css" integrity="sha256-M6SPVDKXO4/5qCZ52eRdZ/LBXUOZvSgpJpRVz&#43;OQteg=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.4cef9415a0112fc0eb3d7af4e58b440f5f95cb1481abd2e2268f248025d38261.js" integrity="sha256-TO&#43;UFaARL8DrPXr05YtED1&#43;VyxSBq9LiJo8kgCXTgmE=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.43a4b39a79ea71977789d8fb5bd91d807a206fa428b3b8d4addc8f0abf152005.js" integrity="sha256-Q6SzmnnqcZd3idj7W9kdgHogb6Qos7jUrdyPCr8VIAU=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -227,7 +237,13 @@ https://github.com/alex-shpak/hugo-book
 <nav id="TableOfContents">
   <ul>
     <li><a href="#introduction">Introduction</a></li>
-    <li><a href="#the-elo-rating-system">The Elo Rating System</a></li>
+    <li><a href="#the-elo-rating-system">The Elo Rating System</a>
+      <ul>
+        <li><a href="#simple-example">Simple Example</a></li>
+        <li><a href="#linear-approximation">Linear Approximation</a></li>
+      </ul>
+    </li>
+    <li><a href="#code">Code</a></li>
   </ul>
 </nav>
 
@@ -248,15 +264,101 @@ https://github.com/alex-shpak/hugo-book
   Introduction
   <a class="anchor" href="#introduction">#</a>
 </h2>
-<p>A chess rating system is a system used in chess to estimate the strength of a player, based on their performance versus other players. They are used by organisations like FIDE, English Chess Federation and online chess websites like chess.com, Lichess only to name a few. In general for a player, their strength is determined by the rating they have, higher rating indicates more proficiency in the sport.</p>
-<p>If they play good against their opponent with higher rating, then their own rating should be increased as well. But how exactly do we give the rating as in attempt to consolidate all the factors into a single number, we are likely to miss some aspects. We therefore try to make it as fair as it should. That&rsquo;s why the most commonly used rating is the <code>Elo rating system</code> invented by Arpad Elo. Some can choose to modify the Elo rating system for their own need like USCF uses USCF system in which <code>K factor</code> is varies for each match and player is given bonus points for the superior performance in the tournament.
-So let&rsquo;s first understand what is the Elo rating system in easy way.</p>
+<p>A chess rating system is a system used in chess to estimate the strength of a player, based on their performance versus other players. They are used by organisations like FIDE, English Chess Federation and online chess websites like chess.com, Lichess only to name a few. In general for a player, their strength is determined by the rating, higher rating indicates more proficiency.</p>
+<p>Winning against higher-rated players boosts one&rsquo;s rating, while losing to lower-rated players leads to a decrease. But how exactly do we give the rating as in attempt to consolidate all the factors into a single number, we are likely to miss some aspects. We therefore try to make it as fair as it should. That&rsquo;s why the most commonly used rating is the <code>Elo rating system</code> invented by Arpad Elo. USCF uses USCF system in which <code>K factor</code> is varies for each match and player is given bonus points for the superior performance in the tournament.
+So let&rsquo;s first understand what is the Elo rating system in an easy way.</p>
 <h2 id="the-elo-rating-system">
   The Elo Rating System
   <a class="anchor" href="#the-elo-rating-system">#</a>
 </h2>
-<p>Now before we go further, first we need to know some things like what is the expected score and what is an actual score of the match. For instance, a player of 2500 plays 16 matches and wins 10, and draws 1, his actual score is 10.5(1 for each win and 0.5 for each draw), however expected score is calculated through the probability of the winning which is</p>
-<p>$$P1 = \frac{1.0}{1.0 + 10^{\frac{{\text{{rating1}} - \text{{rating2}}}}{400}}}$$</p>
+<h3 id="simple-example">
+  Simple Example
+  <a class="anchor" href="#simple-example">#</a>
+</h3>
+<p>First we need to know what is the <code>expected score</code> and what is an <code>actual score</code> of the player in a match. For instance, a player1 of rating 1200 plays 16 matches and wins 10 , and draws 1,against player2 with rating 1000, his actual score is 10.5(1 for each win, 0.5 for each draw, 0 for a loss :/), however expected score is calculated through the probability of the winning which is
+$$P1 = \frac{1.0}{1.0 + 10^{\frac{{\text{{rating1}} - \text{{rating2}}}}{400}}}$$
+Rating difference of  gave player1 expected score of 0.75. This is an impossible score and a draw would be costly conversely a draw would improve the rating of player2.
+The formula is</p>
+<p>$$
+\begin{align*}
+NewRating &amp;= OldRating + K \cdot (actual - expected) \tag{i} \
+\end{align*}
+$$</p>
+<p>where $K$=10</p>
+<h3 id="linear-approximation">
+  Linear Approximation
+  <a class="anchor" href="#linear-approximation">#</a>
+</h3>
+<p>Elo devised a linear approximation to his full system, negating the need to calculate expected score. So we have</p>
+<p>$$ R_{\text{new}} = R_{\text{old}} + \frac{K(W_L)}{2} - \frac{K}{4C} \sum_{i} D_i $$</p>
+<p>Where $R_{\text{new}}$ and $R_{\text{old}}$ are <code>new</code> and <code>old</code> ratings respectively, $D_i$ is the difference of opponents&rsquo; rating minus the player&rsquo;s rating, $W$ is the number of wins, and $L$ is the number of losses, $C=200$, and $K=32$. The term $\frac{W-L}{2}$ is the score above or below 0, and $\frac{\sum D}{4C}$ is the expected score according to: 4C rating points equals 100%. Note that this of the similar form as $(i)$.</p>
+<p>The USCF used a modification of this system to calculate ratings after individual games of <a href="https://en.wikipedia.org/wiki/Correspondence_chess">correspondence chess</a>(it is usually played through a correspondence chess server, a public internet chess forum, or email, in contrast to over the board chess) with a $K$ = 32 and $C$ = 200.</p>
+<h2 id="code">
+  Code
+  <a class="anchor" href="#code">#</a>
+</h2>
+<p>Note that this C++ code only implements the equation $(i)$</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;bits/stdc++.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> <span style="color:#a6e22e">Probability</span>(<span style="color:#66d9ef">int</span> rating1, <span style="color:#66d9ef">int</span> rating2)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">1.0</span><span style="color:#f92672">/</span>(<span style="color:#ae81ff">1</span><span style="color:#f92672">+</span> <span style="color:#ae81ff">1.0</span><span style="color:#f92672">*</span> pow(<span style="color:#ae81ff">10</span>,<span style="color:#ae81ff">1.0</span> <span style="color:#f92672">*</span> (rating1 <span style="color:#f92672">-</span> rating2) <span style="color:#f92672">/</span> <span style="color:#ae81ff">400</span>));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">EloRating</span>(<span style="color:#66d9ef">float</span> Ra, <span style="color:#66d9ef">float</span> Rb, <span style="color:#66d9ef">int</span> K, <span style="color:#66d9ef">int</span> d)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// To calculate the Winning Probabilities
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">float</span> Pb <span style="color:#f92672">=</span> Probability(Ra, Rb);
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">float</span> Pa <span style="color:#f92672">=</span> Probability(Rb, Ra);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Case When Player A wins
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">if</span> (d <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>		Ra <span style="color:#f92672">=</span> Ra <span style="color:#f92672">+</span> K <span style="color:#f92672">*</span> (<span style="color:#ae81ff">1</span> <span style="color:#f92672">-</span> Pa);
+</span></span><span style="display:flex;"><span>		Rb <span style="color:#f92672">=</span> Rb <span style="color:#f92672">+</span> K <span style="color:#f92672">*</span> (<span style="color:#ae81ff">0</span> <span style="color:#f92672">-</span> Pb);
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Case When Player B wins
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span>(d<span style="color:#f92672">==</span><span style="color:#ae81ff">0</span>){
+</span></span><span style="display:flex;"><span>		Ra <span style="color:#f92672">=</span> Ra <span style="color:#f92672">+</span> K <span style="color:#f92672">*</span> (<span style="color:#ae81ff">0</span> <span style="color:#f92672">-</span> Pa);
+</span></span><span style="display:flex;"><span>		Rb <span style="color:#f92672">=</span> Rb <span style="color:#f92672">+</span> K <span style="color:#f92672">*</span> (<span style="color:#ae81ff">1</span> <span style="color:#f92672">-</span> Pb);
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Case of draw
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (d<span style="color:#f92672">==</span><span style="color:#ae81ff">0.5</span>){
+</span></span><span style="display:flex;"><span>        Ra <span style="color:#f92672">=</span> Ra <span style="color:#f92672">+</span> K <span style="color:#f92672">*</span> (<span style="color:#ae81ff">0.5</span><span style="color:#f92672">-</span> Pa);
+</span></span><span style="display:flex;"><span>		Rb <span style="color:#f92672">=</span> Rb <span style="color:#f92672">+</span> K <span style="color:#f92672">*</span> (<span style="color:#ae81ff">0.5</span> <span style="color:#f92672">-</span> Pb);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;Updated Ratings:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+</span></span><span style="display:flex;"><span>	cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;Ra = &#34;</span> <span style="color:#f92672">&lt;&lt;</span> Ra <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34; Rb = &#34;</span> <span style="color:#f92672">&lt;&lt;</span> Rb<span style="color:#f92672">&lt;&lt;</span>endl;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">float</span> Ra , Rb;
+</span></span><span style="display:flex;"><span>    cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;Enter Ra and Rb: &#34;</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>(cin <span style="color:#f92672">&gt;&gt;</span> Ra <span style="color:#f92672">&gt;&gt;</span> Rb) <span style="color:#f92672">||</span> <span style="color:#f92672">!</span>is_floating_point<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">decltype</span>(Ra)<span style="color:#f92672">&gt;::</span>value <span style="color:#f92672">||</span> <span style="color:#f92672">!</span>is_floating_point<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">decltype</span>(Rb)<span style="color:#f92672">&gt;::</span>value) {
+</span></span><span style="display:flex;"><span>        std<span style="color:#f92672">::</span>cerr <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;Error: Ra and Rb must be floats.&#34;</span> <span style="color:#f92672">&lt;&lt;</span> std<span style="color:#f92672">::</span>endl;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>; 
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">int</span> K <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> d;
+</span></span><span style="display:flex;"><span>    cout<span style="color:#f92672">&lt;&lt;</span><span style="color:#e6db74">&#34;Enter the result&#34;</span><span style="color:#f92672">&lt;&lt;</span>endl;
+</span></span><span style="display:flex;"><span>    cin<span style="color:#f92672">&gt;&gt;</span>d;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	EloRating(Ra, Rb, K, d);
+</span></span><span style="display:flex;"><span>    cout<span style="color:#f92672">&lt;&lt;</span>endl;
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Credits: <a href="">Wikipedia</a>, <a href="https://www.geeksforgeeks.org/elo-rating-algorithm/">GFG</a>, <a href="https://stanislav-stankovic.medium.com/elo-rating-system-6196cc59941e">Medium</a></p>
+<p>Thanks for reading!🤓</p>
 </article>
  
       
@@ -299,7 +401,13 @@ So let&rsquo;s first understand what is the Elo rating system in easy way.</p>
 <nav id="TableOfContents">
   <ul>
     <li><a href="#introduction">Introduction</a></li>
-    <li><a href="#the-elo-rating-system">The Elo Rating System</a></li>
+    <li><a href="#the-elo-rating-system">The Elo Rating System</a>
+      <ul>
+        <li><a href="#simple-example">Simple Example</a></li>
+        <li><a href="#linear-approximation">Linear Approximation</a></li>
+      </ul>
+    </li>
+    <li><a href="#code">Code</a></li>
   </ul>
 </nav>
 
