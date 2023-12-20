@@ -5,24 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Leetcode 371 # Sum of Two Integers # Problem Statement:
 Given two integers a and b, return the sum of the two integers without using the operators &#43; and -.
-Logic: We would be treating a and b in binary form for understanding bit operations. First bit of sum calculated by xor(0^1, 1^0, 0^0, 1^1), but for the addition such as 1&#43;1 = 10 we must have some carry, which can be found by &amp; operator between the two numbers.">
+Logic: # We would be treating a and b in binary form for understanding bit operations. First bit of sum calculated by xor(0^1, 1^0, 0^0, 1^1), but for the addition such as 1&#43;1 = 10 we must have some carry, which can be found by &amp; operator between the two numbers.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="" />
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="371. Sum of Two Integers" />
 <meta property="og:description" content="Leetcode 371 # Sum of Two Integers # Problem Statement:
 Given two integers a and b, return the sum of the two integers without using the operators &#43; and -.
-Logic: We would be treating a and b in binary form for understanding bit operations. First bit of sum calculated by xor(0^1, 1^0, 0^0, 1^1), but for the addition such as 1&#43;1 = 10 we must have some carry, which can be found by &amp; operator between the two numbers." />
+Logic: # We would be treating a and b in binary form for understanding bit operations. First bit of sum calculated by xor(0^1, 1^0, 0^0, 1^1), but for the addition such as 1&#43;1 = 10 we must have some carry, which can be found by &amp; operator between the two numbers." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://harpreet287.github.io/docs/lc/getsum/" /><meta property="article:section" content="docs" />
 
 
 
-<title>Get Sum | Harpreet Singh</title>
+<title>371. Sum of Two Integers | Harpreet Singh</title>
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" href="/favicon.png" >
 <link rel="stylesheet" href="/book.min.33a48f5432973b8ff9a82679d9e45d67f2c15d4399bd2829269455cfe390b5e8.css" integrity="sha256-M6SPVDKXO4/5qCZ52eRdZ/LBXUOZvSgpJpRVz&#43;OQteg=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.2e019a6180a273966d75d408f6db16182a97af992960c48b80207a645c507666.js" integrity="sha256-LgGaYYCic5ZtddQI9tsWGCqXr5kpYMSLgCB6ZFxQdmY=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.73d3ee3e5ce4116d2a223dc9b2309e725d1a182587a67deb99d3c7de700aa1c3.js" integrity="sha256-c9PuPlzkEW0qIj3JsjCecl0aGCWHpn3rmdPH3nAKocM=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -90,7 +90,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/docs/lc/8/" class="">8th</a>
+    <a href="/docs/lc/getsum/" class="active">371. Sum of Two Integers</a>
   
 
         </li>
@@ -103,7 +103,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/docs/lc/getsum/" class="active">Get Sum</a>
+    <a href="/docs/lc/8/" class="">8. String to Integer</a>
   
 
         </li>
@@ -163,7 +163,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>Get Sum</strong>
+  <strong>371. Sum of Two Integers</strong>
 
   <label for="toc-control">
     
@@ -179,7 +179,17 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#sum-of-two-integers">Sum of Two Integers</a></li>
+    <li><a href="#sum-of-two-integers">Sum of Two Integers</a>
+      <ul>
+        <li><a href="#logic">Logic:</a></li>
+      </ul>
+    </li>
+    <li><a href="#code">Code</a>
+      <ul>
+        <li><a href="#time-complexity">Time Complexity</a></li>
+        <li><a href="#space-complexity">Space Complexity</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
 
@@ -202,10 +212,13 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 <p>Problem Statement:</p>
 <p><code>Given two integers a and b, return the sum of the two integers without using the operators + and -.</code></p>
-<p><code>Logic</code>:
-We would be treating a and b in binary form for understanding bit operations.
-First bit of <code>sum</code> calculated by <code>xor(0^1, 1^0, 0^0, 1^1)</code>, but for the addition such as 1+1 = 10 we must have some <code>carry</code>, which can be found by <code>&amp;</code> operator between the two numbers. Also note that this approach takes count into the 3 bit addition in case of carry (1^1^1=1 and 1&amp;1&amp;1 = 1).
-We proceed as follows</p>
+<h3 id="logic">
+  Logic:
+  <a class="anchor" href="#logic">#</a>
+</h3>
+<p>We would be treating a and b in binary form for understanding bit operations.
+First bit of <code>sum</code> calculated by <code>xor(0^1, 1^0, 0^0, 1^1)</code>, but for the addition such as 1+1 = 10 we must have some <code>carry</code>, which can be found by <code>&amp;</code> operator between the two numbers. Also note that this approach takes count into the 3 bit addition in case of carry (1^1^1=1 and 1&amp;1&amp;1 = 1).</p>
+<p>We proceed as follows</p>
 <pre tabindex="0"><code>procedure ADD(a, b):
     if a:
         carry = a AND b
@@ -213,10 +226,10 @@ We proceed as follows</p>
         return ADD(carry &lt;&lt; 1, sum)
     else:
         return sum
-</code></pre><p><code>Time Complexity:  O(log(max(a, b)))</code> where &ldquo;log&rdquo; is the logarithm base 2.
-This is because in each recursive call, the size of the input (represented by the maximum of &lsquo;a&rsquo; and &lsquo;b&rsquo;) is reduced by half due to the left shift (carry &laquo; 1).</p>
-<p><code>Space Complexity: O(log(max(a,b)))</code>
-This is because each recursive call consumes space on the call stack, and the maximum depth of the recursion is determined by the number of bits needed to represent the larger of the two numbers, &lsquo;a&rsquo; or &lsquo;b&rsquo;.</p>
+</code></pre><h2 id="code">
+  Code
+  <a class="anchor" href="#code">#</a>
+</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> { <span style="color:#75715e">// Working c++ code
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> getSum(<span style="color:#66d9ef">int</span> a, <span style="color:#66d9ef">int</span> b) {
@@ -225,7 +238,19 @@ This is because each recursive call consumes space on the call stack, and the ma
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> b;
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div></article>
+</span></span></code></pre></div><h3 id="time-complexity">
+  Time Complexity
+  <a class="anchor" href="#time-complexity">#</a>
+</h3>
+<p><code> O(log(max(a, b)))</code> where &ldquo;log&rdquo; is the logarithm base 2.
+This is because in each recursive call, the size of the input (represented by the maximum of &lsquo;a&rsquo; and &lsquo;b&rsquo;) is reduced by half due to the left shift (carry &laquo; 1).</p>
+<h3 id="space-complexity">
+  Space Complexity
+  <a class="anchor" href="#space-complexity">#</a>
+</h3>
+<p><code>O(log(max(a,b)))</code>
+This is because each recursive call consumes space on the call stack, and the maximum depth of the recursion is determined by the number of bits needed to represent the larger of the two numbers, &lsquo;a&rsquo; or &lsquo;b&rsquo;.</p>
+</article>
  
       
 
@@ -266,7 +291,17 @@ This is because each recursive call consumes space on the call stack, and the ma
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#sum-of-two-integers">Sum of Two Integers</a></li>
+    <li><a href="#sum-of-two-integers">Sum of Two Integers</a>
+      <ul>
+        <li><a href="#logic">Logic:</a></li>
+      </ul>
+    </li>
+    <li><a href="#code">Code</a>
+      <ul>
+        <li><a href="#time-complexity">Time Complexity</a></li>
+        <li><a href="#space-complexity">Space Complexity</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
 

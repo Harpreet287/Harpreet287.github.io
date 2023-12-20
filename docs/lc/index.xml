@@ -8,18 +8,18 @@
     <language>en-us</language>
     <atom:link href="https://harpreet287.github.io/docs/lc/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title></title>
-      <link>https://harpreet287.github.io/docs/lc/8/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://harpreet287.github.io/docs/lc/8/</guid>
-      <description>8. String to Integer (atoi)[yellow(medium)] # Problem Statement: # Implement the myAtoi(string s) function, which converts a string to a 32-bit signed integer (similar to C/C++&amp;#39;s atoi function). The algorithm for myAtoi(string s) is as follows: Read in and ignore any leading whitespace. Check if the next character (if not already at the end of the string) is &amp;#39;-&amp;#39; or &amp;#39;+&amp;#39;. Read this character in if it is either. This determines if the final result is negative or positive respectively.</description>
-    </item>
-    <item>
-      <title></title>
+      <title>371. Sum of Two Integers</title>
       <link>https://harpreet287.github.io/docs/lc/getsum/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>https://harpreet287.github.io/docs/lc/getsum/</guid>
-      <description>Leetcode 371 # Sum of Two Integers # Problem Statement:&#xA;Given two integers a and b, return the sum of the two integers without using the operators + and -.&#xA;Logic: We would be treating a and b in binary form for understanding bit operations. First bit of sum calculated by xor(0^1, 1^0, 0^0, 1^1), but for the addition such as 1+1 = 10 we must have some carry, which can be found by &amp;amp; operator between the two numbers.</description>
+      <description>Leetcode 371 # Sum of Two Integers # Problem Statement:&#xA;Given two integers a and b, return the sum of the two integers without using the operators + and -.&#xA;Logic: # We would be treating a and b in binary form for understanding bit operations. First bit of sum calculated by xor(0^1, 1^0, 0^0, 1^1), but for the addition such as 1+1 = 10 we must have some carry, which can be found by &amp;amp; operator between the two numbers.</description>
+    </item>
+    <item>
+      <title>8. String to Integer</title>
+      <link>https://harpreet287.github.io/docs/lc/8/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://harpreet287.github.io/docs/lc/8/</guid>
+      <description>8. String to Integer # Problem Statement # Implement the myAtoi(string s) function, which converts a string to a 32-bit signed integer (similar to C/C++&amp;#39;s atoi function). The algorithm for myAtoi(string s) is as follows: Read in and ignore any leading whitespace. Check if the next character (if not already at the end of the string) is &amp;#39;-&amp;#39; or &amp;#39;+&amp;#39;. Read this character in if it is either. This determines if the final result is negative or positive respectively.</description>
     </item>
   </channel>
 </rss>
