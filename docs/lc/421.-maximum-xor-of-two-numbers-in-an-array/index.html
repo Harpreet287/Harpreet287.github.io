@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="421. Maximum XOR of Two Numbers in an Array # Approach # I. Naive(O(n^2))[TLE❌] # We can try to find the maximum xor by brute force, i.e., for every pair (a, b) we calculate x and maximize it.
+Code # class Solution { public: int findMaximumXOR(vector&lt;int&gt;&amp; nums) { int maxi = 0; for(int i = 0; i &lt; nums.size() - 1; i&#43;&#43;){ for(int j = i &#43; 1; j &lt; nums.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="421. Maximum XOR of Two Numbers in an Array" />
+<meta property="og:description" content="421. Maximum XOR of Two Numbers in an Array # Approach # I. Naive(O(n^2))[TLE❌] # We can try to find the maximum xor by brute force, i.e., for every pair (a, b) we calculate x and maximize it.
+Code # class Solution { public: int findMaximumXOR(vector&lt;int&gt;&amp; nums) { int maxi = 0; for(int i = 0; i &lt; nums.size() - 1; i&#43;&#43;){ for(int j = i &#43; 1; j &lt; nums." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://harpreet287.github.io/docs/lc/421.-maximum-xor-of-two-numbers-in-an-array/" /><meta property="article:section" content="docs" />
+
+
+
+<title>421. Maximum XOR of Two Numbers in an Array | Harpreet Singh</title>
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+        <script>
+          document.addEventListener("DOMContentLoaded", function() {
+              renderMathInElement(document.body, {
+                  delimiters: [
+                      {left: "$$", right: "$$", display: true},
+                      {left: "$", right: "$", display: false}
+                  ]
+              });
+          });
+      </script>
+  </head>
+  ...
+</html>
+
+
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/favicon.png" >
+<link rel="stylesheet" href="/book.min.33a48f5432973b8ff9a82679d9e45d67f2c15d4399bd2829269455cfe390b5e8.css" integrity="sha256-M6SPVDKXO4/5qCZ52eRdZ/LBXUOZvSgpJpRVz&#43;OQteg=" crossorigin="anonymous">
+  <script defer src="/flexsearch.min.js"></script>
+  <script defer src="/en.search.min.805cacacc03cfdfcc1b75850333963ca9b1f58365da80585fc23431e4418939a.js" integrity="sha256-gFysrMA8/fzBt1hQMzljypsfWDZdqAWF/CNDHkQYk5o=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+  
+
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Harpreet Singh</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-4743293995ef089d075c101a4e477e5c" class="toggle"  />
+    <label for="section-4743293995ef089d075c101a4e477e5c" class="flex justify-between">
+      <a role="button" class="">Miscellaneous Problems</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/misc/minflips/" class="">Minimum flips to make xy string</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-7e54a69bd89898e62c5d07072e60fb22" class="toggle"  />
+    <label for="section-7e54a69bd89898e62c5d07072e60fb22" class="flex justify-between">
+      <a role="button" class="">Weekly Algorithm</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/wa/rating_system/" class="">Rating Algorithm in chess</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-135194338c24fdbc4ec34431f5d6bb6e" class="toggle" checked />
+    <label for="section-135194338c24fdbc4ec34431f5d6bb6e" class="flex justify-between">
+      <a role="button" class="">Leetcode</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/lc/getsum/" class="">371. Sum of Two Integers</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/lc/421.-maximum-xor-of-two-numbers-in-an-array/" class="active">421. Maximum XOR of Two Numbers in an Array</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/lc/8/" class="">8. String to Integer</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/first_one/" class="">About Me</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>421. Maximum XOR of Two Numbers in an Array</strong>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#approach">Approach</a>
+      <ul>
+        <li><a href="#i-naiveon2tle">I. Naive(O(n^2))[TLE❌]</a></li>
+        <li><a href="#iioptimizedo32npassed">II.Optimized(O(32n))[Passed✅]</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="421-maximum-xor-of-two-numbers-in-an-array">
+  421. Maximum XOR of Two Numbers in an Array
+  <a class="anchor" href="#421-maximum-xor-of-two-numbers-in-an-array">#</a>
+</h1>
+<h2 id="approach">
+  Approach
+  <a class="anchor" href="#approach">#</a>
+</h2>
+<h3 id="i-naiveon2tle">
+  I. Naive(O(n^2))[TLE❌]
+  <a class="anchor" href="#i-naiveon2tle">#</a>
+</h3>
+<p>We can try to find the maximum xor by brute force, i.e., for every pair (a, b) we calculate <code>x</code> and maximize it.</p>
+<h4 id="code">
+  Code
+  <a class="anchor" href="#code">#</a>
+</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> findMaximumXOR(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> maxi <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> nums.size() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; i<span style="color:#f92672">++</span>){
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&lt;</span> nums.size(); j<span style="color:#f92672">++</span>){
+</span></span><span style="display:flex;"><span>                maxi <span style="color:#f92672">=</span> max(maxi, nums[i] <span style="color:#f92672">^</span> nums[j]);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> maxi;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h3 id="iioptimizedo32npassed">
+  II.Optimized(O(32n))[Passed✅]
+  <a class="anchor" href="#iioptimizedo32npassed">#</a>
+</h3>
+<p>We can solve this problem using bit manipulation technique. The idea is to use the bits of numbers from least significant to most significant and keep track. So to keep track we store them in a Trie with our root storing MSB.
+Steps</p>
+<ul>
+<li>Store each num in trie.</li>
+<li>Iterate each number <code>num</code> again from our trie, and for each <code>num</code> we try to iterate through a number <code>x</code> such that it gives max xor for this number and our goal is to maximize the <code>res</code> i.e. <code>max(num ^ x) for num in nums</code>
+<ul>
+<li>For each element in nums, from the <code>root</code> of our trie.</li>
+</ul>
+<ol>
+<li>If our current bit of <code>num</code> is <code>1</code>, try to visit for<code>0</code> in the trie.</li>
+<li>If our current bit of <code>num</code> is <code>0</code>, try to visit for <code>1</code> in the trie.</li>
+<li>Else we just visit the child of the root.</li>
+</ol>
+</li>
+<li>This would give us the maximum xor as we traversed the path when xor was possibly bit result was <code>1</code> and <code>0</code> when our try failed.</li>
+</ul>
+<h4 id="code-1">
+  Code
+  <a class="anchor" href="#code-1">#</a>
+</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TrieNode</span> {
+</span></span><span style="display:flex;"><span>    TrieNode <span style="color:#f92672">*</span>child[<span style="color:#ae81ff">2</span>] <span style="color:#f92672">=</span> {};
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">increase</span>(<span style="color:#66d9ef">int</span> number) {
+</span></span><span style="display:flex;"><span>        TrieNode <span style="color:#f92672">*</span>cur <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">31</span>; i <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">--</span>i) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> bit <span style="color:#f92672">=</span> (number <span style="color:#f92672">&gt;&gt;</span> i) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (cur<span style="color:#f92672">-&gt;</span>child[bit] <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) cur<span style="color:#f92672">-&gt;</span>child[bit] <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> TrieNode();
+</span></span><span style="display:flex;"><span>            cur <span style="color:#f92672">=</span> cur<span style="color:#f92672">-&gt;</span>child[bit];
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">findMax</span>(<span style="color:#66d9ef">int</span> number) {
+</span></span><span style="display:flex;"><span>        TrieNode <span style="color:#f92672">*</span>cur <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> ans <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">31</span>; i <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">--</span>i) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> bit <span style="color:#f92672">=</span> (number <span style="color:#f92672">&gt;&gt;</span> i) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (cur<span style="color:#f92672">-&gt;</span>child[<span style="color:#ae81ff">1</span> <span style="color:#f92672">-</span> bit] <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span>) {
+</span></span><span style="display:flex;"><span>                cur <span style="color:#f92672">=</span> cur<span style="color:#f92672">-&gt;</span>child[<span style="color:#ae81ff">1</span> <span style="color:#f92672">-</span> bit];
+</span></span><span style="display:flex;"><span>                ans <span style="color:#f92672">|=</span> (<span style="color:#ae81ff">1</span> <span style="color:#f92672">&lt;&lt;</span> i);
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> cur <span style="color:#f92672">=</span> cur<span style="color:#f92672">-&gt;</span>child[bit];
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ans;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> findMaximumXOR(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">&amp;</span>nums) {
+</span></span><span style="display:flex;"><span>        TrieNode <span style="color:#f92672">*</span>trieNode <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> TrieNode();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> x : nums) trieNode<span style="color:#f92672">-&gt;</span>increase(x);
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> ans <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> x : nums) ans <span style="color:#f92672">=</span> max(ans, trieNode<span style="color:#f92672">-&gt;</span>findMax(x));
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ans;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p><a href="https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/solutions/1345905/c-python-trie-solution-clean-concise-o-32n/">credits to @hiepit</a> for his clear explaination and elegant c++ code, this code taught me alot!</p>
+<p>Thanks🙋‍♂️</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#approach">Approach</a>
+      <ul>
+        <li><a href="#i-naiveon2tle">I. Naive(O(n^2))[TLE❌]</a></li>
+        <li><a href="#iioptimizedo32npassed">II.Optimized(O(32n))[Passed✅]</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+<script id="partials/analytics.html" 
+ data-goatcounter="https://rollinghash.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+
+
+
+
+
+
+
+
+

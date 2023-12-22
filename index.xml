@@ -23,6 +23,13 @@
       <description>Leetcode 371 # Sum of Two Integers # Problem Statement:&#xA;Given two integers a and b, return the sum of the two integers without using the operators + and -.&#xA;Logic # We would be treating a and b in binary form for understanding bit operations. First bit of sum calculated by xor(0^1, 1^0, 0^0, 1^1), but for the addition such as 1+1 = 10 we must have some carry, which can be found by &amp;amp; operator between the two numbers.</description>
     </item>
     <item>
+      <title>421. Maximum XOR of Two Numbers in an Array</title>
+      <link>https://harpreet287.github.io/docs/lc/421.-maximum-xor-of-two-numbers-in-an-array/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://harpreet287.github.io/docs/lc/421.-maximum-xor-of-two-numbers-in-an-array/</guid>
+      <description>421. Maximum XOR of Two Numbers in an Array # Approach # I. Naive(O(n^2))[TLE❌] # We can try to find the maximum xor by brute force, i.e., for every pair (a, b) we calculate x and maximize it.&#xA;Code # class Solution { public: int findMaximumXOR(vector&amp;lt;int&amp;gt;&amp;amp; nums) { int maxi = 0; for(int i = 0; i &amp;lt; nums.size() - 1; i++){ for(int j = i + 1; j &amp;lt; nums.</description>
+    </item>
+    <item>
       <title>8. String to Integer</title>
       <link>https://harpreet287.github.io/docs/lc/8/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
