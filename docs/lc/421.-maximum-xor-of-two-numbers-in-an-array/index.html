@@ -47,7 +47,7 @@ Code # class Solution { public: int findMaximumXOR(vector&lt;int&gt;&amp; nums) 
 <link rel="icon" href="/favicon.png" >
 <link rel="stylesheet" href="/book.min.33a48f5432973b8ff9a82679d9e45d67f2c15d4399bd2829269455cfe390b5e8.css" integrity="sha256-M6SPVDKXO4/5qCZ52eRdZ/LBXUOZvSgpJpRVz&#43;OQteg=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.805cacacc03cfdfcc1b75850333963ca9b1f58365da80585fc23431e4418939a.js" integrity="sha256-gFysrMA8/fzBt1hQMzljypsfWDZdqAWF/CNDHkQYk5o=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.a3df3222ac6d6dd7d1dc532b7f8546c83b540933116171fc099f08d5627b56e3.js" integrity="sha256-o98yIqxtbdfR3FMrf4VGyDtUCTMRYXH8CZ8I1WJ7VuM=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -341,18 +341,15 @@ https://github.com/alex-shpak/hugo-book
 <p>We can solve this problem using bit manipulation technique. The idea is to use the bits of numbers from least significant to most significant and keep track. So to keep track we store them in a Trie with our root storing MSB.
 Steps</p>
 <ul>
-<li>Store each num in trie.</li>
-<li>Iterate each number <code>num</code> again from our trie, and for each <code>num</code> we try to iterate through a number <code>x</code> such that it gives max xor for this number and our goal is to maximize the <code>res</code> i.e. <code>max(num ^ x) for num in nums</code>
-<ul>
-<li>For each element in nums, from the <code>root</code> of our trie.</li>
-</ul>
+<li>Store each `num`` in trie.</li>
+<li>To find maximum xor value for each <code>num</code>, we traverse the <code>num</code> in our trie st:
 <ol>
-<li>If our current bit of <code>num</code> is <code>1</code>, try to visit for<code>0</code> in the trie.</li>
-<li>If our current bit of <code>num</code> is <code>0</code>, try to visit for <code>1</code> in the trie.</li>
-<li>Else we just visit the child of the root.</li>
+<li>If our current bit of <code>num</code> is <code>1</code>, try to visit child node <code>0</code> in the trie.</li>
+<li>If our current bit of <code>num</code> is <code>0</code>, try to visit child node  <code>1</code> in the trie.</li>
+<li>Else we just visit whatever child we have of the root.</li>
 </ol>
 </li>
-<li>This would give us the maximum xor as we traversed the path when xor was possibly bit result was <code>1</code> and <code>0</code> when our try failed.</li>
+<li>This would give us the maximum xor as we traversed the path when bit result was <code>1</code> and <code>0</code> when our try failed(i.e we can&rsquo;t find <code>0</code> for <code>1</code> or vice versa).</li>
 </ul>
 <h4 id="code-1">
   Code
