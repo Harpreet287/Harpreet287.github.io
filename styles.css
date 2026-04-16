@@ -151,6 +151,10 @@ body {
   color: var(--text);
   font: inherit;
   line-height: 1.2;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .header-search-input::-webkit-search-cancel-button,
@@ -162,6 +166,15 @@ body {
 
 .header-search-input::-ms-clear {
   display: none;
+}
+
+.header-search-input:hover {
+  background: var(--panel);
+  border-color: rgba(0, 0, 0, 0.22);
+}
+
+:root[data-theme="dark"] .header-search-input:hover {
+  border-color: rgba(255, 255, 255, 0.24);
 }
 
 .header-search-input::placeholder {
@@ -467,9 +480,13 @@ a:hover {
 
 .toc a {
   display: block;
-  padding: 0.18rem 0;
+  padding: 0.22rem 0.35rem;
   border-bottom: 0;
   color: rgba(0, 0, 0, 0.62);
+  border-radius: 10px;
+  transition:
+    color 160ms ease,
+    background 160ms ease;
 }
 
 :root[data-theme="dark"] .toc a {
@@ -478,10 +495,24 @@ a:hover {
 
 .toc a:hover {
   color: var(--text);
+  background: var(--panel);
 }
 
 .toc a.active {
   color: var(--link);
+  background: rgba(43, 89, 195, 0.06);
+}
+
+.toc a.active:hover {
+  background: rgba(43, 89, 195, 0.1);
+}
+
+:root[data-theme="dark"] .toc a.active {
+  background: rgba(138, 180, 248, 0.1);
+}
+
+:root[data-theme="dark"] .toc a.active:hover {
+  background: rgba(138, 180, 248, 0.14);
 }
 
 .toc .toc-level-2 {
@@ -490,6 +521,18 @@ a:hover {
 
 .toc .toc-level-3 {
   padding-left: 1.2rem;
+}
+
+.toc .toc-level-4 {
+  padding-left: 1.75rem;
+}
+
+.toc .toc-level-5 {
+  padding-left: 2.3rem;
+}
+
+.toc .toc-level-6 {
+  padding-left: 2.85rem;
 }
 
 /* Reading progress bar (top) */
@@ -510,7 +553,7 @@ a:hover {
 }
 
 /* Markdown content styling */
-.markdown :is(h1, h2, h3, h4) {
+.markdown :is(h1, h2, h3, h4, h5, h6) {
   scroll-margin-top: 5.75rem;
 }
 

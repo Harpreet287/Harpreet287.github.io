@@ -20,7 +20,7 @@ $$\int_{-\infty}^{\infty} e^{-x^2}\,dx = \sqrt{\pi}$$
 
 ## A figure (academic style)
 
-![Sine wave plot](data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA3MjAgMjYwJz4KICA8cmVjdCB3aWR0aD0nNzIwJyBoZWlnaHQ9JzI2MCcgZmlsbD0nd2hpdGUnLz4KICA8ZyBzdHJva2U9JyNlNmU2ZTYnIHN0cm9rZS13aWR0aD0nMSc+CiAgICA8bGluZSB4MT0nNjAnIHkxPSczMCcgeDI9JzYwJyB5Mj0nMjMwJy8+CiAgICA8bGluZSB4MT0nNjAnIHkxPScxMzAnIHgyPSc2OTAnIHkyPScxMzAnLz4KICAgIDxsaW5lIHgxPScxODAnIHkxPSczMCcgeDI9JzE4MCcgeTI9JzIzMCcvPgogICAgPGxpbmUgeDE9JzMwMCcgeTE9JzMwJyB4Mj0nMzAwJyB5Mj0nMjMwJy8+CiAgICA8bGluZSB4MT0nNDIwJyB5MT0nMzAnIHgyPSc0MjAnIHkyPScyMzAnLz4KICAgIDxsaW5lIHgxPSc1NDAnIHkxPSczMCcgeDI9JzU0MCcgeTI9JzIzMCcvPgogICAgPGxpbmUgeDE9JzY2MCcgeTE9JzMwJyB4Mj0nNjYwJyB5Mj0nMjMwJy8+CiAgPC9nPgogIDxnIHN0cm9rZT0nI2JkYmRiZCcgc3Ryb2tlLXdpZHRoPScxLjUnPgogICAgPGxpbmUgeDE9JzYwJyB5MT0nMjMwJyB4Mj0nNjAnIHkyPSczMCcvPgogICAgPGxpbmUgeDE9JzYwJyB5MT0nMTMwJyB4Mj0nNjkwJyB5Mj0nMTMwJy8+CiAgPC9nPgogIDxwYXRoIGQ9J002MCAxMzAgQyAxMDUgNjAsIDE1MCA2MCwgMTk1IDEzMCBDIDI0MCAyMDAsIDI4NSAyMDAsIDMzMCAxMzAgQyAzNzUgNjAsIDQyMCA2MCwgNDY1IDEzMCBDIDUxMCAyMDAsIDU1NSAyMDAsIDYwMCAxMzAgQyA2NDUgNjAsIDY3NSA3NSwgNjkwIDExMCcgZmlsbD0nbm9uZScgc3Ryb2tlPScjMjIyJyBzdHJva2Utd2lkdGg9JzIuMjUnLz4KPC9zdmc+)
+![Sine wave plot](sine-wave.svg)
 
 _Figure 1: Inline SVG via data URI (no extra files needed)._
 
@@ -32,6 +32,18 @@ _Figure 1: Inline SVG via data URI (no extra files needed)._
 | Dark mode | Yes |
 | Footnotes | Yes |
 | KaTeX | Yes |
+
+## Nesting demo
+
+### Level 3 (subheading)
+
+#### Level 4 (sub-subheading)
+
+##### Level 5
+
+###### Level 6
+
+This section exists to demonstrate nested headings in the TOC.
 
 ## Collapsible sections
 

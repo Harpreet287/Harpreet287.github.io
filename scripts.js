@@ -49,7 +49,7 @@ const EMBEDDED_POSTS = {
     `\n` +
     `## A figure (academic style)\n` +
     `\n` +
-    `![Sine wave plot](data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA3MjAgMjYwJz4KICA8cmVjdCB3aWR0aD0nNzIwJyBoZWlnaHQ9JzI2MCcgZmlsbD0nd2hpdGUnLz4KICA8ZyBzdHJva2U9JyNlNmU2ZTYnIHN0cm9rZS13aWR0aD0nMSc+CiAgICA8bGluZSB4MT0nNjAnIHkxPSczMCcgeDI9JzYwJyB5Mj0nMjMwJy8+CiAgICA8bGluZSB4MT0nNjAnIHkxPScxMzAnIHgyPSc2OTAnIHkyPScxMzAnLz4KICAgIDxsaW5lIHgxPScxODAnIHkxPSczMCcgeDI9JzE4MCcgeTI9JzIzMCcvPgogICAgPGxpbmUgeDE9JzMwMCcgeTE9JzMwJyB4Mj0nMzAwJyB5Mj0nMjMwJy8+CiAgICA8bGluZSB4MT0nNDIwJyB5MT0nMzAnIHgyPSc0MjAnIHkyPScyMzAnLz4KICAgIDxsaW5lIHgxPSc1NDAnIHkxPSczMCcgeDI9JzU0MCcgeTI9JzIzMCcvPgogICAgPGxpbmUgeDE9JzY2MCcgeTE9JzMwJyB4Mj0nNjYwJyB5Mj0nMjMwJy8+CiAgPC9nPgogIDxnIHN0cm9rZT0nI2JkYmRiZCcgc3Ryb2tlLXdpZHRoPScxLjUnPgogICAgPGxpbmUgeDE9JzYwJyB5MT0nMjMwJyB4Mj0nNjAnIHkyPSczMCcvPgogICAgPGxpbmUgeDE9JzYwJyB5MT0nMTMwJyB4Mj0nNjkwJyB5Mj0nMTMwJy8+CiAgPC9nPgogIDxwYXRoIGQ9J002MCAxMzAgQyAxMDUgNjAsIDE1MCA2MCwgMTk1IDEzMCBDIDI0MCAyMDAsIDI4NSAyMDAsIDMzMCAxMzAgQyAzNzUgNjAsIDQyMCA2MCwgNDY1IDEzMCBDIDUxMCAyMDAsIDU1NSAyMDAsIDYwMCAxMzAgQyA2NDUgNjAsIDY3NSA3NSwgNjkwIDExMCcgZmlsbD0nbm9uZScgc3Ryb2tlPScjMjIyJyBzdHJva2Utd2lkdGg9JzIuMjUnLz4KPC9zdmc+)\n` +
+    `![Sine wave plot](sine-wave.svg)\n` +
     `\n` +
     `_Figure 1: Inline SVG via data URI (no extra files needed)._ \n` +
     `\n` +
@@ -61,6 +61,18 @@ const EMBEDDED_POSTS = {
     `| Dark mode | Yes |\n` +
     `| Footnotes | Yes |\n` +
     `| KaTeX | Yes |\n` +
+    `\n` +
+    `## Nesting demo\n` +
+    `\n` +
+    `### Level 3 (subheading)\n` +
+    `\n` +
+    `#### Level 4 (sub-subheading)\n` +
+    `\n` +
+    `##### Level 5\n` +
+    `\n` +
+    `###### Level 6\n` +
+    `\n` +
+    `This section exists to demonstrate nested headings in the TOC.\n` +
     `\n` +
     `## Collapsible sections\n` +
     `\n` +
@@ -103,7 +115,7 @@ const EMBEDDED_POSTS = {
     `Markdown rendering, anchors, and TOC still work here.\n`,
 };
 
-const STORAGE_THEME = "colah_blog_theme";
+const STORAGE_THEME = "custom_blog_theme";
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -534,7 +546,7 @@ function copyToClipboard(text) {
 }
 
 function addHeadingAnchors(contentRoot) {
-  const headings = $$("h1, h2, h3", contentRoot);
+  const headings = $$("h1, h2, h3, h4, h5, h6", contentRoot);
   const used = new Map();
 
   for (const h of headings) {
@@ -590,8 +602,8 @@ function buildToc(headings) {
 
   for (const h of headings) {
     const level = Number((h.tagName || "H2").slice(1));
-    const cls =
-      level === 2 ? "toc-level-2" : level === 3 ? "toc-level-3" : "toc-level-1";
+    const safeLevel = Number.isFinite(level) ? Math.min(6, Math.max(1, level)) : 2;
+    const cls = `toc-level-${safeLevel}`;
     const a = document.createElement("a");
     a.href = `#${encodeURIComponent(h.id)}`;
     a.className = cls;
