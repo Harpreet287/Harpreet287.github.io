@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>My Blog</title>
+
+    <!-- Computer Modern (LaTeX-style) web fonts -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/fonts.css"
+    />
+
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="wrap header-row">
+        <a class="site-title" href="./index.html">My Blog</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="./index.html">Posts</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap" id="content">
+      <h1>Posts</h1>
+
+      <ol class="post-list">
+        <li class="post-item">
+          <a class="post-link" href="./posts/post1.html">
+            A Sample Post: Math, Figures, and Typography
+          </a>
+          <div class="post-meta">April 17, 2026</div>
+          <p class="post-excerpt">
+            A single-file article showing KaTeX math, academic-style figures, and
+            colah-like readability — with zero build tooling.
+          </p>
+        </li>
+      </ol>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span>© 2026 My Blog • Static HTML/CSS for GitHub Pages</span>
+      </div>
+    </footer>
+  </body>
+</html>
