@@ -96,8 +96,6 @@ const EMBEDDED_POSTS = {
     `description: "A smaller post to demonstrate chronological navigation."\n` +
     `---\n` +
     `\n` +
-    `# Second Post\n` +
-    `\n` +
     `This post exists to demonstrate **previous/next** navigation.\n` +
     `\n` +
     `## A short section\n` +
@@ -109,6 +107,116 @@ const STORAGE_THEME = "colah_blog_theme";
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+function loadExternalScript(src, { id, timeoutMs = 6000 } = {}) {
+  return new Promise((resolve, reject) => {
+    if (id) {
+      const existing = document.getElementById(id);
+      if (existing) return resolve(existing);
+    }
+
+    const s = document.createElement("script");
+    if (id) s.id = id;
+    s.src = src;
+    s.async = true;
+
+    const t = window.setTimeout(() => {
+      s.remove();
+      reject(new Error(`Timed out loading ${src}`));
+    }, timeoutMs);
+
+    s.addEventListener("load", () => {
+      window.clearTimeout(t);
+      resolve(s);
+    });
+    s.addEventListener("error", () => {
+      window.clearTimeout(t);
+      s.remove();
+      reject(new Error(`Failed to load ${src}`));
+    });
+
+    document.head.appendChild(s);
+  });
+}
+
+async function ensureGlobal(globalKey, sources, { id, timeoutMs = 6000 } = {}) {
+  if (window[globalKey]) return window[globalKey];
+
+  for (const src of sources) {
+    try {
+      await loadExternalScript(src, { id, timeoutMs });
+      if (window[globalKey]) return window[globalKey];
+    } catch {
+      // try next
+    }
+  }
+
+  return null;
+}
+
+async function ensureFuse() {
+  if (window.Fuse) return window.Fuse;
+
+  // Try a couple of CDNs; we don't want search to block rendering.
+  const sources = [
+    "https://unpkg.com/fuse.js@6.6.2/dist/fuse.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.6.2/fuse.min.js",
+  ];
+
+  for (const src of sources) {
+    try {
+      await loadExternalScript(src, { id: "fusejs", timeoutMs: 4000 });
+      if (window.Fuse) return window.Fuse;
+    } catch {
+      // try next
+    }
+  }
+
+  return null;
+}
+
+async function ensurePostDeps() {
+  // markdown-it core
+  await ensureGlobal("markdownit", [
+    "https://unpkg.com/markdown-it@14.1.0/dist/markdown-it.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/markdown-it/14.1.0/markdown-it.min.js",
+    "https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js",
+  ], { id: "md_it", timeoutMs: 6000 });
+
+  // footnotes plugin
+  await ensureGlobal("markdownitFootnote", [
+    "https://unpkg.com/markdown-it-footnote@4.0.0/dist/markdown-it-footnote.min.js",
+    "https://cdn.jsdelivr.net/npm/markdown-it-footnote@4.0.0/dist/markdown-it-footnote.min.js",
+  ], { id: "md_it_footnote", timeoutMs: 6000 });
+
+  // container plugin (used for ::: details ...)
+  await ensureGlobal("markdownitContainer", [
+    "https://unpkg.com/markdown-it-container@3.0.0/dist/markdown-it-container.min.js",
+    "https://cdn.jsdelivr.net/npm/markdown-it-container@3.0.0/dist/markdown-it-container.min.js",
+  ], { id: "md_it_container", timeoutMs: 6000 });
+
+  // highlight.js (syntax highlighting)
+  await ensureGlobal("hljs", [
+    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js",
+    "https://unpkg.com/highlight.js@11.9.0/lib/common.min.js",
+    "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js",
+  ], { id: "hljs", timeoutMs: 6000 });
+
+  // KaTeX (math) + auto-render
+  await ensureGlobal("katex", [
+    "https://unpkg.com/katex@0.16.9/dist/katex.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js",
+    "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js",
+  ], { id: "katex", timeoutMs: 6000 });
+
+  if (!window.renderMathInElement) {
+    await ensureGlobal("renderMathInElement", [
+      "https://unpkg.com/katex@0.16.9/dist/contrib/auto-render.min.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js",
+      "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js",
+    ], { id: "katex_autorender", timeoutMs: 6000 });
+  }
+}
 
 function isFileProtocol() {
   return window.location.protocol === "file:";
@@ -153,6 +261,103 @@ function initTheme() {
     localStorage.setItem(STORAGE_THEME, next);
     setTheme(next);
   });
+}
+
+function initHeaderSearch() {
+  const toggle = $("#searchToggle");
+  const field = $("#headerSearchField");
+  const input = $("#searchInput");
+  const clear = $("#searchClear");
+  const header = document.querySelector(".site-header");
+
+  if (!toggle || !field || !input || !header) return;
+
+  const isEditableTarget = (el) => {
+    if (!el) return false;
+    const tag = el.tagName;
+    return (
+      tag === "INPUT" ||
+      tag === "TEXTAREA" ||
+      tag === "SELECT" ||
+      el.isContentEditable
+    );
+  };
+
+  const syncQueryState = () => {
+    const hasQuery = input.value.trim().length > 0;
+    header.classList.toggle("search-has-query", hasQuery);
+    input.classList.toggle("placeholder-animate", !hasQuery && header.classList.contains("search-open"));
+  };
+
+  const setOpen = (open) => {
+    header.classList.toggle("search-open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    field.setAttribute("aria-hidden", open ? "false" : "true");
+
+    input.tabIndex = open ? 0 : -1;
+    if (clear) clear.tabIndex = open ? 0 : -1;
+    syncQueryState();
+
+    if (open) {
+      window.setTimeout(() => {
+        input.focus({ preventScroll: true });
+        input.select();
+      }, 0);
+    }
+  };
+
+  const isOpen = () => header.classList.contains("search-open");
+  const open = () => setOpen(true);
+  const close = () => setOpen(false);
+
+  toggle.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (isOpen()) close();
+    else open();
+  });
+
+  field.addEventListener("focusout", (e) => {
+    const next = e.relatedTarget;
+    if (next && field.contains(next)) return;
+    close();
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    e.preventDefault();
+    close();
+    toggle.focus();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.defaultPrevented) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+    if (e.key === "/" && !isEditableTarget(document.activeElement)) {
+      e.preventDefault();
+      open();
+      return;
+    }
+
+    if (e.key === "Escape" && isOpen() && document.activeElement !== input) {
+      e.preventDefault();
+      close();
+      return;
+    }
+  });
+
+  if (clear) {
+    clear.addEventListener("click", () => {
+      input.value = "";
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      syncQueryState();
+      input.focus({ preventScroll: true });
+    });
+  }
+
+  input.addEventListener("input", syncQueryState);
+  syncQueryState();
+  close();
 }
 
 function formatDate(isoDate) {
@@ -241,9 +446,17 @@ async function fetchMarkdown(filename) {
 
 async function loadPosts({ includeHidden = false } = {}) {
   const items = [];
+  let lastError = null;
   for (const filename of POSTS) {
-    const md = await fetchMarkdown(filename);
-    const { meta, body } = parseFrontmatter(md);
+    let mdText;
+    try {
+      mdText = await fetchMarkdown(filename);
+    } catch (e) {
+      lastError = e;
+      continue;
+    }
+
+    const { meta, body } = parseFrontmatter(mdText);
     const id = basenameWithoutExt(filename);
 
     const normalized = {
@@ -260,6 +473,8 @@ async function loadPosts({ includeHidden = false } = {}) {
     if (!includeHidden && normalized.hidden) continue;
     items.push(normalized);
   }
+
+  if (items.length === 0 && lastError) throw lastError;
 
   items.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)); // newest first
   return items;
@@ -286,6 +501,12 @@ function slugify(text) {
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-")
   );
+}
+
+function headingPlainText(headingEl) {
+  const clone = headingEl.cloneNode(true);
+  for (const a of clone.querySelectorAll(".heading-anchor")) a.remove();
+  return (clone.textContent || "").trim();
 }
 
 function copyToClipboard(text) {
@@ -317,7 +538,7 @@ function addHeadingAnchors(contentRoot) {
   const used = new Map();
 
   for (const h of headings) {
-    const text = h.textContent || "";
+    const text = headingPlainText(h);
     if (!text.trim()) continue;
 
     let id = slugify(text);
@@ -334,7 +555,8 @@ function addHeadingAnchors(contentRoot) {
     a.href = `#${encodeURIComponent(id)}`;
     a.setAttribute("aria-label", "Copy link to this section");
     a.title = "Copy link";
-    a.textContent = "#";
+    a.dataset.icon = "¶";
+    a.textContent = "";
     a.addEventListener("click", async (e) => {
       e.preventDefault();
       const url = new URL(window.location.href);
@@ -344,12 +566,16 @@ function addHeadingAnchors(contentRoot) {
       try {
         await copyToClipboard(url.toString());
         showToast("Link copied");
-        a.textContent = "✓";
+        a.dataset.icon = "✓";
         window.setTimeout(() => {
-          a.textContent = "#";
+          a.dataset.icon = "¶";
         }, 900);
       } catch {
         showToast("Copy failed");
+        a.dataset.icon = "!";
+        window.setTimeout(() => {
+          a.dataset.icon = "¶";
+        }, 900);
       }
     });
 
@@ -369,7 +595,7 @@ function buildToc(headings) {
     const a = document.createElement("a");
     a.href = `#${encodeURIComponent(h.id)}`;
     a.className = cls;
-    a.textContent = h.textContent?.replace(/\s*#\s*$/, "") || h.id;
+    a.textContent = headingPlainText(h) || h.id;
     nav.appendChild(a);
   }
 
@@ -581,7 +807,7 @@ async function initHomePage() {
   const tagFilters = $("#tagFilters");
   const clearBtn = $("#clearFilters");
 
-  if (!list || !status || !searchInput || !tagFilters || !clearBtn) return;
+  if (!list || !status || !searchInput) return;
 
   status.textContent = "Loading posts…";
 
@@ -601,31 +827,39 @@ async function initHomePage() {
   ).sort((a, b) => a.localeCompare(b));
 
   const selected = new Set();
-  for (const t of allTags) {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "tag-pill";
-    btn.textContent = t;
-    btn.dataset.selected = "false";
-    btn.addEventListener("click", () => {
-      if (selected.has(t)) selected.delete(t);
-      else selected.add(t);
-      btn.dataset.selected = selected.has(t) ? "true" : "false";
-      render();
-    });
-    tagFilters.appendChild(btn);
+  if (tagFilters) {
+    for (const t of allTags) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "tag-pill";
+      btn.textContent = t;
+      btn.dataset.selected = "false";
+      btn.addEventListener("click", () => {
+        if (selected.has(t)) selected.delete(t);
+        else selected.add(t);
+        btn.dataset.selected = selected.has(t) ? "true" : "false";
+        render();
+      });
+      tagFilters.appendChild(btn);
+    }
   }
 
-  clearBtn.addEventListener("click", () => {
-    selected.clear();
-    for (const b of $$(".tag-pill", tagFilters)) b.dataset.selected = "false";
-    searchInput.value = "";
-    render();
-  });
+  if (clearBtn && tagFilters) {
+    clearBtn.addEventListener("click", () => {
+      selected.clear();
+      for (const b of $$(".tag-pill", tagFilters)) b.dataset.selected = "false";
+      searchInput.value = "";
+      render();
+    });
+  }
 
-  const fuse =
-    window.Fuse &&
-    new window.Fuse(posts, {
+  let fuse = null;
+
+  // Load Fuse.js lazily so the homepage still works even if a CDN is slow/unavailable.
+  // Once Fuse loads, we upgrade search without changing the UI.
+  ensureFuse().then((FuseCtor) => {
+    if (!FuseCtor) return;
+    fuse = new FuseCtor(posts, {
       includeScore: true,
       threshold: 0.35,
       ignoreLocation: true,
@@ -636,6 +870,8 @@ async function initHomePage() {
         { name: "content", weight: 0.3 },
       ],
     });
+    render();
+  });
 
   function matchesTags(post) {
     if (selected.size === 0) return true;
@@ -646,6 +882,15 @@ async function initHomePage() {
 
   function renderList(items) {
     list.replaceChildren();
+
+    if (items.length === 0) {
+      const li = document.createElement("li");
+      li.className = "post-item";
+      li.innerHTML =
+        '<div class="muted">No posts found. If you are previewing locally, GitHub Pages deployment will load Markdown files normally.</div>';
+      list.appendChild(li);
+      return;
+    }
 
     for (const p of items) {
       const li = document.createElement("li");
@@ -701,7 +946,7 @@ async function initHomePage() {
       );
     }
 
-    clearBtn.hidden = !(q || selected.size > 0);
+    if (clearBtn) clearBtn.hidden = !(q || selected.size > 0);
     status.textContent = filtered.length
       ? `${filtered.length} post${filtered.length === 1 ? "" : "s"}`
       : "No posts match your filters.";
@@ -759,7 +1004,7 @@ async function initPostPage() {
     return;
   }
 
-  document.title = `${current.title} — My Blog`;
+  document.title = `${current.title} — Harpreet's Blog`;
   titleEl.textContent = current.title;
   metaEl.textContent = formatDate(current.date);
 
@@ -770,6 +1015,9 @@ async function initPostPage() {
     s.textContent = t;
     tagsEl.appendChild(s);
   }
+
+  // Load markdown renderer + plugins + KaTeX + syntax highlighting without blocking the initial HTML.
+  await ensurePostDeps();
 
   // ==== Markdown injection point (rendered HTML goes here) ====
   // Markdown parser: markdown-it + markdown-it-footnote (loaded via CDN in template.html).
@@ -859,6 +1107,7 @@ async function initPostPage() {
 
 window.addEventListener("DOMContentLoaded", async () => {
   initTheme();
+  initHeaderSearch();
 
   const page = document.body?.dataset?.page;
   if (page === "home") await initHomePage();

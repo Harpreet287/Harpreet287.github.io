@@ -33,14 +33,7 @@
       disabled
     />
 
-    <!-- Dependencies (no build tools): markdown-it + footnotes + KaTeX + highlight.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/markdown-it-footnote@4.0.0/dist/markdown-it-footnote.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/markdown-it-container@3.0.0/dist/markdown-it-container.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-
+    <!-- JS dependencies are loaded lazily by scripts.js so slow CDNs don't block rendering. -->
     <script defer src="../scripts.js"></script>
   </head>
 
@@ -51,7 +44,7 @@
 
     <header class="site-header">
       <div class="wrap-wide header-row">
-        <a class="site-title" href="../index.html">My Blog</a>
+        <a class="site-title" href="../index.html">Harpreet's blog</a>
         <div class="header-actions">
           <a class="text-button" href="../index.html">Posts</a>
           <button
@@ -118,7 +111,7 @@
 
     <footer class="site-footer">
       <div class="wrap-wide">
-        <span>© 2026 My Blog</span>
+        <span>© 2026 Harpreet's blog</span>
       </div>
     </footer>
   </body>

@@ -6,11 +6,8 @@ hidden: false
 description: "A smaller post to demonstrate chronological navigation."
 ---
 
-# Second Post
-
 This post exists to demonstrate **previous/next** navigation.
 
 ## A short section
 
 Markdown rendering, anchors, and TOC still work here.
-
