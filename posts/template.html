@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Post</title>
+
+    <!-- Computer Modern (LaTeX-style) web fonts -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/fonts.css"
+    />
+
+    <link rel="stylesheet" href="../styles.css" />
+
+    <!-- KaTeX (math) -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+
+    <!-- highlight.js themes (toggled by scripts.js via disabled=) -->
+    <link
+      id="hljsThemeLight"
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css"
+    />
+    <link
+      id="hljsThemeDark"
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css"
+      disabled
+    />
+
+    <!-- Dependencies (no build tools): markdown-it + footnotes + KaTeX + highlight.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/markdown-it-footnote@4.0.0/dist/markdown-it-footnote.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/markdown-it-container@3.0.0/dist/markdown-it-container.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <script defer src="../scripts.js"></script>
+  </head>
+
+  <body data-page="post">
+    <div class="progress" aria-hidden="true">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <header class="site-header">
+      <div class="wrap-wide header-row">
+        <a class="site-title" href="../index.html">My Blog</a>
+        <div class="header-actions">
+          <a class="text-button" href="../index.html">Posts</a>
+          <button
+            id="themeToggle"
+            class="icon-button"
+            type="button"
+            aria-label="Toggle dark mode"
+            title="Toggle dark mode"
+          >
+            ◐
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap-wide">
+      <div class="post-layout">
+        <article class="post">
+          <header class="post-header">
+            <h1 id="postTitle"></h1>
+            <div id="postMeta" class="muted"></div>
+            <div id="postTags" class="post-tags" aria-label="Post tags"></div>
+          </header>
+
+          <!-- Markdown is rendered + injected into #postContent by scripts.js -->
+          <div id="postContent" class="markdown"></div>
+
+          <footer class="post-footer">
+            <nav class="post-pagination" aria-label="Post navigation">
+              <a id="navPrev" class="post-nav-link" href="#" hidden></a>
+              <a id="navNext" class="post-nav-link" href="#" hidden></a>
+            </nav>
+          </footer>
+        </article>
+
+        <aside class="toc-panel" aria-label="Table of contents">
+          <div class="toc-title">Contents</div>
+          <nav id="toc" class="toc"></nav>
+        </aside>
+      </div>
+    </main>
+
+    <button
+      class="toc-fab"
+      id="tocFab"
+      type="button"
+      aria-controls="tocDrawer"
+      aria-expanded="false"
+    >
+      Contents
+    </button>
+
+    <div class="toc-drawer" id="tocDrawer" hidden>
+      <div class="toc-drawer-header">
+        <div class="toc-title">Contents</div>
+        <button class="icon-button" id="tocClose" type="button" aria-label="Close contents">
+          ✕
+        </button>
+      </div>
+      <nav id="tocMobile" class="toc"></nav>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+
+    <footer class="site-footer">
+      <div class="wrap-wide">
+        <span>© 2026 My Blog</span>
+      </div>
+    </footer>
+  </body>
+</html>

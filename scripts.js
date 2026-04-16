@@ -1,0 +1,866 @@
+/* scripts.js
+   Production-quality static blog engine (no build step).
+
+   How to add a new post:
+   1) Create `posts/my-post.md` with frontmatter (see post1.md).
+   2) Add `"my-post.md"` to the `POSTS` array below.
+
+   How metadata works:
+   - Frontmatter is the YAML-ish block between `---` lines at the top of a .md file.
+   - Supported keys: title, date (YYYY-MM-DD), tags (array), hidden (bool), description (string).
+
+   Extended Markdown (no HTML required in posts):
+   - Collapsible sections: use
+       ::: details Optional summary
+       Markdown inside…
+       :::
+   - Figures with captions: write an image on its own line, followed by an italic
+     caption paragraph starting with "Figure …"; the renderer converts it to
+     <figure> + <figcaption>.
+*/
+
+// ==== Post manifest (static hosting can't list directories) ====
+const POSTS = ["post1.md", "post2.md"];
+
+// When a site is opened via `file://`, most browsers block `fetch()` for local files.
+// This embedded map keeps the demo working when you double-click `index.html`.
+// On GitHub Pages (https://...), the renderer loads Markdown from `/posts/*.md` normally.
+const EMBEDDED_POSTS = {
+  "post1.md":
+    `---\n` +
+    `title: "A High-End Markdown Blog (Demo Post)"\n` +
+    `date: "2026-04-17"\n` +
+    `tags: ["Math", "Markdown", "UX"]\n` +
+    `hidden: false\n` +
+    `description: "A demo post showing TOC, KaTeX math, footnotes, tables, details, and code copy."\n` +
+    `---\n` +
+    `\n` +
+    `This is a production-quality **static** technical blog system: Markdown-first, LaTeX-like typography, right-side TOC, dark mode, reading progress, anchors with copy-to-clipboard, footnotes, KaTeX math, tables, and syntax highlighting.\n` +
+    `\n` +
+    `## Inline math\n` +
+    `\n` +
+    `Inline math uses \`$...$\`: Euler’s identity $e^{i\\pi}+1=0$.\n` +
+    `\n` +
+    `## Block math\n` +
+    `\n` +
+    `Block math uses \`$$...$$\`:\n` +
+    `\n` +
+    `$$\\int_{-\\infty}^{\\infty} e^{-x^2}\\,dx = \\sqrt{\\pi}$$\n` +
+    `\n` +
+    `## A figure (academic style)\n` +
+    `\n` +
+    `![Sine wave plot](data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA3MjAgMjYwJz4KICA8cmVjdCB3aWR0aD0nNzIwJyBoZWlnaHQ9JzI2MCcgZmlsbD0nd2hpdGUnLz4KICA8ZyBzdHJva2U9JyNlNmU2ZTYnIHN0cm9rZS13aWR0aD0nMSc+CiAgICA8bGluZSB4MT0nNjAnIHkxPSczMCcgeDI9JzYwJyB5Mj0nMjMwJy8+CiAgICA8bGluZSB4MT0nNjAnIHkxPScxMzAnIHgyPSc2OTAnIHkyPScxMzAnLz4KICAgIDxsaW5lIHgxPScxODAnIHkxPSczMCcgeDI9JzE4MCcgeTI9JzIzMCcvPgogICAgPGxpbmUgeDE9JzMwMCcgeTE9JzMwJyB4Mj0nMzAwJyB5Mj0nMjMwJy8+CiAgICA8bGluZSB4MT0nNDIwJyB5MT0nMzAnIHgyPSc0MjAnIHkyPScyMzAnLz4KICAgIDxsaW5lIHgxPSc1NDAnIHkxPSczMCcgeDI9JzU0MCcgeTI9JzIzMCcvPgogICAgPGxpbmUgeDE9JzY2MCcgeTE9JzMwJyB4Mj0nNjYwJyB5Mj0nMjMwJy8+CiAgPC9nPgogIDxnIHN0cm9rZT0nI2JkYmRiZCcgc3Ryb2tlLXdpZHRoPScxLjUnPgogICAgPGxpbmUgeDE9JzYwJyB5MT0nMjMwJyB4Mj0nNjAnIHkyPSczMCcvPgogICAgPGxpbmUgeDE9JzYwJyB5MT0nMTMwJyB4Mj0nNjkwJyB5Mj0nMTMwJy8+CiAgPC9nPgogIDxwYXRoIGQ9J002MCAxMzAgQyAxMDUgNjAsIDE1MCA2MCwgMTk1IDEzMCBDIDI0MCAyMDAsIDI4NSAyMDAsIDMzMCAxMzAgQyAzNzUgNjAsIDQyMCA2MCwgNDY1IDEzMCBDIDUxMCAyMDAsIDU1NSAyMDAsIDYwMCAxMzAgQyA2NDUgNjAsIDY3NSA3NSwgNjkwIDExMCcgZmlsbD0nbm9uZScgc3Ryb2tlPScjMjIyJyBzdHJva2Utd2lkdGg9JzIuMjUnLz4KPC9zdmc+)\n` +
+    `\n` +
+    `_Figure 1: Inline SVG via data URI (no extra files needed)._ \n` +
+    `\n` +
+    `## Tables\n` +
+    `\n` +
+    `| Feature | Supported |\n` +
+    `|---|---:|\n` +
+    `| Right-side TOC | Yes |\n` +
+    `| Dark mode | Yes |\n` +
+    `| Footnotes | Yes |\n` +
+    `| KaTeX | Yes |\n` +
+    `\n` +
+    `## Collapsible sections\n` +
+    `\n` +
+    `::: details Click to expand a technical aside\n` +
+    `\n` +
+    `This is a collapsible section written in Markdown — no HTML required.\n` +
+    `\n` +
+    `- It supports **lists**\n` +
+    `- And math: $e^{i\\pi}+1=0$\n` +
+    `\n` +
+    `:::\n` +
+    `\n` +
+    `## Code blocks (with copy button)\n` +
+    `\n` +
+    "```js\n" +
+    "function hello(name) {\n" +
+    "  return `Hello, ${name}`;\n" +
+    "}\n" +
+    "console.log(hello(\"world\"));\n" +
+    "```\n" +
+    `\n` +
+    `## Footnotes\n` +
+    `\n` +
+    `Here is a sentence with a footnote.[^1]\n` +
+    `\n` +
+    `[^1]: This footnote is rendered by the markdown-it-footnote plugin.\n`,
+  "post2.md":
+    `---\n` +
+    `title: "Second Post (For Prev/Next Navigation)"\n` +
+    `date: "2026-04-10"\n` +
+    `tags: ["Notes"]\n` +
+    `hidden: false\n` +
+    `description: "A smaller post to demonstrate chronological navigation."\n` +
+    `---\n` +
+    `\n` +
+    `# Second Post\n` +
+    `\n` +
+    `This post exists to demonstrate **previous/next** navigation.\n` +
+    `\n` +
+    `## A short section\n` +
+    `\n` +
+    `Markdown rendering, anchors, and TOC still work here.\n`,
+};
+
+const STORAGE_THEME = "colah_blog_theme";
+
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+function isFileProtocol() {
+  return window.location.protocol === "file:";
+}
+
+function safeJsonParse(value, fallback) {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+}
+
+function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+
+  // If highlight.js themes are present (post page), toggle them with the theme.
+  const themeLight = $("#hljsThemeLight");
+  const themeDark = $("#hljsThemeDark");
+  if (themeLight && themeDark) {
+    themeLight.disabled = theme === "dark";
+    themeDark.disabled = theme !== "dark";
+  }
+}
+
+function initTheme() {
+  const toggle = $("#themeToggle");
+
+  const saved = localStorage.getItem(STORAGE_THEME);
+  const systemPrefersDark =
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+  const initial = saved || (systemPrefersDark ? "dark" : "light");
+  setTheme(initial);
+
+  if (!toggle) return;
+
+  toggle.addEventListener("click", () => {
+    const current = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+    const next = current === "dark" ? "light" : "dark";
+    localStorage.setItem(STORAGE_THEME, next);
+    setTheme(next);
+  });
+}
+
+function formatDate(isoDate) {
+  // isoDate: YYYY-MM-DD
+  const d = new Date(`${isoDate}T00:00:00`);
+  return d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+}
+
+function basenameWithoutExt(filename) {
+  return filename.replace(/^.*\//, "").replace(/\.md$/i, "");
+}
+
+function postUrlFromId(id) {
+  // Always link via the master template.
+  return `./posts/template.html?post=${encodeURIComponent(id)}`;
+}
+
+function postUrlFromIdInPostsDir(id) {
+  // Links when you are already inside /posts/ (template page).
+  return `./template.html?post=${encodeURIComponent(id)}`;
+}
+
+function postFilePath(filename) {
+  // On template.html, posts are in the same folder. On index.html, they are in /posts/.
+  const page = document.body?.dataset?.page || "home";
+  return page === "post" ? `./${filename}` : `./posts/${filename}`;
+}
+
+function parseFrontmatter(markdownText) {
+  const text = markdownText.replace(/^\uFEFF/, "");
+  if (!text.startsWith("---")) return { meta: {}, body: text };
+
+  const match = text.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n([\s\S]*)$/);
+  if (!match) return { meta: {}, body: text };
+
+  const raw = match[1];
+  const body = match[2];
+  const meta = {};
+
+  for (const line of raw.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const idx = trimmed.indexOf(":");
+    if (idx === -1) continue;
+
+    const key = trimmed.slice(0, idx).trim();
+    let value = trimmed.slice(idx + 1).trim();
+
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+
+    if (value === "true") meta[key] = true;
+    else if (value === "false") meta[key] = false;
+    else if (value.startsWith("[") && value.endsWith("]")) meta[key] = safeJsonParse(value, []);
+    else meta[key] = value;
+  }
+
+  return { meta, body };
+}
+
+async function fetchMarkdown(filename) {
+  const url = postFilePath(filename);
+
+  if (isFileProtocol()) {
+    // Try real local file reads first (works in a few permissive setups), then fall back.
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (res.ok) return await res.text();
+    } catch {
+      // ignore
+    }
+
+    const embedded = EMBEDDED_POSTS[filename];
+    if (embedded) return embedded;
+    throw new Error(`Local preview cannot load ${url}.`);
+  }
+
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Failed to load ${url} (${res.status})`);
+  return await res.text();
+}
+
+async function loadPosts({ includeHidden = false } = {}) {
+  const items = [];
+  for (const filename of POSTS) {
+    const md = await fetchMarkdown(filename);
+    const { meta, body } = parseFrontmatter(md);
+    const id = basenameWithoutExt(filename);
+
+    const normalized = {
+      id,
+      filename,
+      title: meta.title || id,
+      date: meta.date || "1970-01-01",
+      tags: Array.isArray(meta.tags) ? meta.tags : [],
+      hidden: Boolean(meta.hidden),
+      description: meta.description || "",
+      content: body,
+    };
+
+    if (!includeHidden && normalized.hidden) continue;
+    items.push(normalized);
+  }
+
+  items.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)); // newest first
+  return items;
+}
+
+function showToast(message) {
+  const toast = $("#toast");
+  if (!toast) return;
+  toast.textContent = message;
+  toast.hidden = false;
+  window.clearTimeout(showToast._t);
+  showToast._t = window.setTimeout(() => {
+    toast.hidden = true;
+  }, 1200);
+}
+
+function slugify(text) {
+  return (
+    text
+      .toLowerCase()
+      .trim()
+      // Keep letters/numbers/spaces/hyphens
+      .replace(/[^\p{Letter}\p{Number}\s-]+/gu, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+  );
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text);
+  }
+
+  return new Promise((resolve, reject) => {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.top = "-1000px";
+      ta.style.left = "-1000px";
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      ta.remove();
+      ok ? resolve() : reject(new Error("execCommand(copy) failed"));
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+function addHeadingAnchors(contentRoot) {
+  const headings = $$("h1, h2, h3", contentRoot);
+  const used = new Map();
+
+  for (const h of headings) {
+    const text = h.textContent || "";
+    if (!text.trim()) continue;
+
+    let id = slugify(text);
+    if (!id) continue;
+
+    const count = used.get(id) || 0;
+    used.set(id, count + 1);
+    if (count > 0) id = `${id}-${count + 1}`;
+
+    h.id = id;
+
+    const a = document.createElement("a");
+    a.className = "heading-anchor";
+    a.href = `#${encodeURIComponent(id)}`;
+    a.setAttribute("aria-label", "Copy link to this section");
+    a.title = "Copy link";
+    a.textContent = "#";
+    a.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const url = new URL(window.location.href);
+      url.hash = id;
+      history.replaceState(null, "", url.toString());
+
+      try {
+        await copyToClipboard(url.toString());
+        showToast("Link copied");
+        a.textContent = "✓";
+        window.setTimeout(() => {
+          a.textContent = "#";
+        }, 900);
+      } catch {
+        showToast("Copy failed");
+      }
+    });
+
+    h.appendChild(a);
+  }
+
+  return headings;
+}
+
+function buildToc(headings) {
+  const nav = document.createElement("div");
+
+  for (const h of headings) {
+    const level = Number((h.tagName || "H2").slice(1));
+    const cls =
+      level === 2 ? "toc-level-2" : level === 3 ? "toc-level-3" : "toc-level-1";
+    const a = document.createElement("a");
+    a.href = `#${encodeURIComponent(h.id)}`;
+    a.className = cls;
+    a.textContent = h.textContent?.replace(/\s*#\s*$/, "") || h.id;
+    nav.appendChild(a);
+  }
+
+  return nav;
+}
+
+function initTocSpy(headings, tocRoot) {
+  const links = $$("a[href^=\"#\"]", tocRoot);
+  const byId = new Map(
+    links.map((a) => [decodeURIComponent(a.getAttribute("href").slice(1)), a])
+  );
+
+  let activeId = "";
+
+  function setActive(id) {
+    if (!id || id === activeId) return;
+    activeId = id;
+    for (const a of links) a.classList.remove("active");
+    const current = byId.get(id);
+    if (current) current.classList.add("active");
+  }
+
+  const obs = new IntersectionObserver(
+    (entries) => {
+      // Pick the top-most visible heading.
+      const visible = entries
+        .filter((e) => e.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (visible.length > 0) setActive(visible[0].target.id);
+    },
+    { rootMargin: "0px 0px -70% 0px", threshold: [0, 1] }
+  );
+
+  for (const h of headings) obs.observe(h);
+  return () => obs.disconnect();
+}
+
+function initCodeCopyButtons(contentRoot) {
+  const blocks = $$("pre > code", contentRoot);
+  for (const code of blocks) {
+    const pre = code.parentElement;
+    if (!pre || pre.querySelector(".code-copy")) continue;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "code-copy";
+    btn.textContent = "Copy";
+    btn.addEventListener("click", async () => {
+      const text = code.textContent || "";
+      try {
+        await copyToClipboard(text);
+        btn.textContent = "Copied";
+        window.setTimeout(() => {
+          btn.textContent = "Copy";
+        }, 900);
+      } catch {
+        btn.textContent = "Failed";
+        window.setTimeout(() => {
+          btn.textContent = "Copy";
+        }, 900);
+      }
+    });
+
+    pre.appendChild(btn);
+  }
+}
+
+function initSyntaxHighlighting(contentRoot) {
+  if (!window.hljs) return;
+  const blocks = $$("pre > code", contentRoot);
+  for (const code of blocks) window.hljs.highlightElement(code);
+}
+
+function enhanceFigures(contentRoot) {
+  // Convert:
+  //   <p><img ...></p>
+  //   <p><em>Figure 1: ...</em></p>
+  // into:
+  //   <figure><img ...><figcaption>Figure 1: ...</figcaption></figure>
+  const paragraphs = $$("p", contentRoot);
+
+  for (const p of paragraphs) {
+    const img = p.querySelector("img");
+    if (!img) continue;
+    if (p.querySelectorAll("img").length !== 1) continue;
+
+    // Ensure the paragraph contains only the image (no surrounding text).
+    const clone = p.cloneNode(true);
+    const cloneImg = clone.querySelector("img");
+    if (cloneImg) {
+      const maybeLink = cloneImg.parentElement;
+      const linkIsOnlyChild =
+        maybeLink &&
+        maybeLink.tagName === "A" &&
+        maybeLink.childNodes.length === 1;
+      (linkIsOnlyChild ? maybeLink : cloneImg).remove();
+    }
+    if (clone.textContent.trim() !== "") continue;
+
+    img.setAttribute("loading", img.getAttribute("loading") || "lazy");
+    img.setAttribute("decoding", img.getAttribute("decoding") || "async");
+
+    const fig = document.createElement("figure");
+    const maybeLink = img.parentElement;
+    const linkIsOnlyChild =
+      maybeLink && maybeLink.tagName === "A" && maybeLink.childNodes.length === 1;
+    fig.appendChild(linkIsOnlyChild ? maybeLink : img); // moves the media node
+
+    const next = p.nextElementSibling;
+    if (next && next.tagName === "P") {
+      const captionText = (next.textContent || "").trim();
+      const looksLikeCaption = /^(figure|fig\.)\s*\d*\s*[:.]/i.test(captionText) || /^figure\s*:/i.test(captionText);
+      const isItalicCaption =
+        next.children.length === 1 && next.firstElementChild?.tagName === "EM";
+
+      if (looksLikeCaption || isItalicCaption) {
+        const cap = document.createElement("figcaption");
+        cap.textContent = captionText;
+        fig.appendChild(cap);
+        next.remove();
+      }
+    }
+
+    p.replaceWith(fig);
+  }
+}
+
+function renderMath(contentRoot) {
+  if (!window.renderMathInElement) return;
+  window.renderMathInElement(contentRoot, {
+    delimiters: [
+      { left: "$$", right: "$$", display: true },
+      { left: "$", right: "$", display: false },
+    ],
+    throwOnError: false,
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+  });
+}
+
+function initProgressBar(articleEl) {
+  const bar = $("#progressBar");
+  if (!bar || !articleEl) return;
+
+  let ticking = false;
+
+  function update() {
+    ticking = false;
+    const rect = articleEl.getBoundingClientRect();
+    const viewport = window.innerHeight || 1;
+
+    const total = rect.height - viewport * 0.9;
+    const progressed = -rect.top;
+    const p = total <= 0 ? 1 : Math.max(0, Math.min(1, progressed / total));
+    bar.style.width = `${(p * 100).toFixed(2)}%`;
+  }
+
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(update);
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll, { passive: true });
+  update();
+}
+
+function initMobileToc(tocNode) {
+  const fab = $("#tocFab");
+  const drawer = $("#tocDrawer");
+  const close = $("#tocClose");
+  const mobileNav = $("#tocMobile");
+  if (!fab || !drawer || !close || !mobileNav) return;
+
+  mobileNav.replaceChildren(tocNode.cloneNode(true));
+
+  const closeDrawer = () => {
+    drawer.hidden = true;
+    fab.setAttribute("aria-expanded", "false");
+  };
+
+  const openDrawer = () => {
+    drawer.hidden = false;
+    fab.setAttribute("aria-expanded", "true");
+  };
+
+  fab.addEventListener("click", () => {
+    if (drawer.hidden) openDrawer();
+    else closeDrawer();
+  });
+
+  close.addEventListener("click", closeDrawer);
+
+  drawer.addEventListener("click", (e) => {
+    const a = e.target.closest("a[href^=\"#\"]");
+    if (!a) return;
+    closeDrawer();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !drawer.hidden) closeDrawer();
+  });
+}
+
+async function initHomePage() {
+  const list = $("#postsList");
+  const status = $("#homeStatus");
+  const searchInput = $("#searchInput");
+  const tagFilters = $("#tagFilters");
+  const clearBtn = $("#clearFilters");
+
+  if (!list || !status || !searchInput || !tagFilters || !clearBtn) return;
+
+  status.textContent = "Loading posts…";
+
+  let posts;
+  try {
+    posts = await loadPosts({ includeHidden: false });
+  } catch {
+    status.textContent =
+      isFileProtocol()
+        ? "Local file preview: only embedded demo posts are available. Deploy to GitHub Pages for live Markdown loading."
+        : "Failed to load posts.";
+    posts = [];
+  }
+
+  const allTags = Array.from(
+    new Set(posts.flatMap((p) => (Array.isArray(p.tags) ? p.tags : [])))
+  ).sort((a, b) => a.localeCompare(b));
+
+  const selected = new Set();
+  for (const t of allTags) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "tag-pill";
+    btn.textContent = t;
+    btn.dataset.selected = "false";
+    btn.addEventListener("click", () => {
+      if (selected.has(t)) selected.delete(t);
+      else selected.add(t);
+      btn.dataset.selected = selected.has(t) ? "true" : "false";
+      render();
+    });
+    tagFilters.appendChild(btn);
+  }
+
+  clearBtn.addEventListener("click", () => {
+    selected.clear();
+    for (const b of $$(".tag-pill", tagFilters)) b.dataset.selected = "false";
+    searchInput.value = "";
+    render();
+  });
+
+  const fuse =
+    window.Fuse &&
+    new window.Fuse(posts, {
+      includeScore: true,
+      threshold: 0.35,
+      ignoreLocation: true,
+      keys: [
+        { name: "title", weight: 0.35 },
+        { name: "description", weight: 0.2 },
+        { name: "tags", weight: 0.15 },
+        { name: "content", weight: 0.3 },
+      ],
+    });
+
+  function matchesTags(post) {
+    if (selected.size === 0) return true;
+    const tags = new Set(post.tags || []);
+    for (const t of selected) if (tags.has(t)) return true; // OR semantics
+    return false;
+  }
+
+  function renderList(items) {
+    list.replaceChildren();
+
+    for (const p of items) {
+      const li = document.createElement("li");
+      li.className = "post-item";
+
+      const a = document.createElement("a");
+      a.className = "post-link";
+      a.href = postUrlFromId(p.id);
+      a.textContent = p.title;
+      li.appendChild(a);
+
+      const meta = document.createElement("div");
+      meta.className = "muted";
+      meta.textContent = formatDate(p.date);
+      li.appendChild(meta);
+
+      if (p.description) {
+        const desc = document.createElement("p");
+        desc.className = "post-excerpt";
+        desc.textContent = p.description;
+        li.appendChild(desc);
+      }
+
+      if (p.tags && p.tags.length) {
+        const tags = document.createElement("div");
+        tags.className = "post-tags";
+        for (const t of p.tags) {
+          const s = document.createElement("span");
+          s.className = "post-tag";
+          s.textContent = t;
+          tags.appendChild(s);
+        }
+        li.appendChild(tags);
+      }
+
+      list.appendChild(li);
+    }
+  }
+
+  function render() {
+    const q = searchInput.value.trim();
+    let filtered = posts.filter(matchesTags);
+
+    if (q && fuse) {
+      const hits = fuse.search(q).map((r) => r.item);
+      const hitIds = new Set(hits.map((p) => p.id));
+      filtered = filtered.filter((p) => hitIds.has(p.id));
+    } else if (q && !fuse) {
+      // Minimal fallback search if Fuse.js fails to load.
+      const qq = q.toLowerCase();
+      filtered = filtered.filter((p) =>
+        (p.title + " " + p.description + " " + p.content).toLowerCase().includes(qq)
+      );
+    }
+
+    clearBtn.hidden = !(q || selected.size > 0);
+    status.textContent = filtered.length
+      ? `${filtered.length} post${filtered.length === 1 ? "" : "s"}`
+      : "No posts match your filters.";
+
+    renderList(filtered);
+  }
+
+  searchInput.addEventListener("input", render);
+  render();
+}
+
+function stripLeadingTitleH1(markdownBody, title) {
+  // If the Markdown starts with a top-level H1 that matches the frontmatter title,
+  // remove it to avoid duplicate titles (the template renders the title).
+  const lines = markdownBody.replace(/^\uFEFF/, "").split("\n");
+  let i = 0;
+  while (i < lines.length && lines[i].trim() === "") i++;
+  const first = lines[i] || "";
+  const m = first.match(/^#\s+(.*)\s*$/);
+  if (!m) return markdownBody;
+
+  const h1 = m[1].trim();
+  if (h1.toLowerCase() !== String(title || "").trim().toLowerCase()) return markdownBody;
+
+  i += 1;
+  while (i < lines.length && lines[i].trim() === "") i++;
+  return lines.slice(i).join("\n");
+}
+
+async function initPostPage() {
+  const titleEl = $("#postTitle");
+  const metaEl = $("#postMeta");
+  const tagsEl = $("#postTags");
+  const contentEl = $("#postContent");
+  const tocDesktop = $("#toc");
+  const navPrev = $("#navPrev");
+  const navNext = $("#navNext");
+
+  if (!titleEl || !metaEl || !tagsEl || !contentEl || !tocDesktop || !navPrev || !navNext) {
+    return;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const requested = params.get("post");
+
+  const posts = await loadPosts({ includeHidden: false });
+  const byId = new Map(posts.map((p) => [p.id, p]));
+
+  const current =
+    (requested && byId.get(requested.replace(/\.md$/i, ""))) || posts[0];
+
+  if (!current) {
+    titleEl.textContent = "Post not found";
+    contentEl.innerHTML = "<p>Missing post.</p>";
+    return;
+  }
+
+  document.title = `${current.title} — My Blog`;
+  titleEl.textContent = current.title;
+  metaEl.textContent = formatDate(current.date);
+
+  tagsEl.replaceChildren();
+  for (const t of current.tags || []) {
+    const s = document.createElement("span");
+    s.className = "post-tag";
+    s.textContent = t;
+    tagsEl.appendChild(s);
+  }
+
+  // ==== Markdown injection point (rendered HTML goes here) ====
+  // Markdown parser: markdown-it + markdown-it-footnote (loaded via CDN in template.html).
+  if (!window.markdownit) {
+    contentEl.innerHTML = "<p>Markdown renderer failed to load.</p>";
+    return;
+  }
+
+  const md = window.markdownit({
+    html: true, // allow footnotes HTML + any rare inline HTML in Markdown.
+    linkify: true,
+    typographer: true,
+  });
+
+  if (window.markdownitFootnote) md.use(window.markdownitFootnote);
+  if (window.markdownitContainer) {
+    md.use(window.markdownitContainer, "details", {
+      validate: (params) => /^details(?:\s+.*)?$/.test(params.trim()),
+      render: (tokens, idx) => {
+        const info = (tokens[idx].info || "").trim();
+        const m = info.match(/^details(?:\s+(.*))?$/);
+        if (tokens[idx].nesting === 1) {
+          const summary = m && m[1] ? md.utils.escapeHtml(m[1]) : "Details";
+          return `<details><summary>${summary}</summary>\n`;
+        }
+        return `</details>\n`;
+      },
+    });
+  }
+
+  // Lazy-load images from Markdown.
+  const defaultImageRule = md.renderer.rules.image;
+  md.renderer.rules.image = (tokens, idx, options, env, self) => {
+    const token = tokens[idx];
+    token.attrSet("loading", "lazy");
+    token.attrSet("decoding", "async");
+    token.attrSet("referrerpolicy", "no-referrer");
+    return defaultImageRule
+      ? defaultImageRule(tokens, idx, options, env, self)
+      : self.renderToken(tokens, idx, options);
+  };
+
+  const body = stripLeadingTitleH1(current.content, current.title);
+  contentEl.innerHTML = md.render(body);
+  enhanceFigures(contentEl);
+
+  // Post-render enhancements.
+  const headings = addHeadingAnchors(contentEl);
+  const tocNode = buildToc(headings);
+  tocDesktop.replaceChildren(tocNode.cloneNode(true));
+  initMobileToc(tocNode);
+  initTocSpy(headings, tocDesktop);
+
+  initSyntaxHighlighting(contentEl);
+  initCodeCopyButtons(contentEl);
+  renderMath(contentEl);
+
+  initProgressBar(document.querySelector("article.post"));
+
+  // Handle deep links after IDs are created.
+  if (window.location.hash) {
+    const target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+    if (target) target.scrollIntoView({ block: "start" });
+  }
+
+  // Prev/Next navigation (chronological, newest first).
+  const idx = posts.findIndex((p) => p.id === current.id);
+  const newer = idx > 0 ? posts[idx - 1] : null;
+  const older = idx >= 0 && idx < posts.length - 1 ? posts[idx + 1] : null;
+
+  if (newer) {
+    navPrev.hidden = false;
+    navPrev.href = postUrlFromIdInPostsDir(newer.id);
+    navPrev.textContent = `← Newer: ${newer.title}`;
+  } else {
+    navPrev.hidden = true;
+  }
+
+  if (older) {
+    navNext.hidden = false;
+    navNext.href = postUrlFromIdInPostsDir(older.id);
+    navNext.textContent = `Older: ${older.title} →`;
+  } else {
+    navNext.hidden = true;
+  }
+}
+
+window.addEventListener("DOMContentLoaded", async () => {
+  initTheme();
+
+  const page = document.body?.dataset?.page;
+  if (page === "home") await initHomePage();
+  if (page === "post") await initPostPage();
+});
