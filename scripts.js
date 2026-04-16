@@ -20,100 +20,11 @@
 */
 
 // ==== Post manifest (static hosting can't list directories) ====
-const POSTS = ["post1.md", "post2.md"];
+const POSTS = ["post1.md", "post2.md", "post3.md"];
 
 // When a site is opened via `file://`, most browsers block `fetch()` for local files.
-// This embedded map keeps the demo working when you double-click `index.html`.
-// On GitHub Pages (https://...), the renderer loads Markdown from `/posts/*.md` normally.
-const EMBEDDED_POSTS = {
-  "post1.md":
-    `---\n` +
-    `title: "A High-End Markdown Blog (Demo Post)"\n` +
-    `date: "2026-04-17"\n` +
-    `tags: ["Math", "Markdown", "UX"]\n` +
-    `hidden: false\n` +
-    `description: "A demo post showing TOC, KaTeX math, footnotes, tables, details, and code copy."\n` +
-    `---\n` +
-    `\n` +
-    `This is a production-quality **static** technical blog system: Markdown-first, LaTeX-like typography, right-side TOC, dark mode, reading progress, anchors with copy-to-clipboard, footnotes, KaTeX math, tables, and syntax highlighting.\n` +
-    `\n` +
-    `## Inline math\n` +
-    `\n` +
-    `Inline math uses \`$...$\`: Euler’s identity $e^{i\\pi}+1=0$.\n` +
-    `\n` +
-    `## Block math\n` +
-    `\n` +
-    `Block math uses \`$$...$$\`:\n` +
-    `\n` +
-    `$$\\int_{-\\infty}^{\\infty} e^{-x^2}\\,dx = \\sqrt{\\pi}$$\n` +
-    `\n` +
-    `## A figure (academic style)\n` +
-    `\n` +
-    `![Sine wave plot](sine-wave.svg)\n` +
-    `\n` +
-    `_Figure 1: Inline SVG via data URI (no extra files needed)._ \n` +
-    `\n` +
-    `## Tables\n` +
-    `\n` +
-    `| Feature | Supported |\n` +
-    `|---|---:|\n` +
-    `| Right-side TOC | Yes |\n` +
-    `| Dark mode | Yes |\n` +
-    `| Footnotes | Yes |\n` +
-    `| KaTeX | Yes |\n` +
-    `\n` +
-    `## Nesting demo\n` +
-    `\n` +
-    `### Level 3 (subheading)\n` +
-    `\n` +
-    `#### Level 4 (sub-subheading)\n` +
-    `\n` +
-    `##### Level 5\n` +
-    `\n` +
-    `###### Level 6\n` +
-    `\n` +
-    `This section exists to demonstrate nested headings in the TOC.\n` +
-    `\n` +
-    `## Collapsible sections\n` +
-    `\n` +
-    `::: details Click to expand a technical aside\n` +
-    `\n` +
-    `This is a collapsible section written in Markdown — no HTML required.\n` +
-    `\n` +
-    `- It supports **lists**\n` +
-    `- And math: $e^{i\\pi}+1=0$\n` +
-    `\n` +
-    `:::\n` +
-    `\n` +
-    `## Code blocks (with copy button)\n` +
-    `\n` +
-    "```js\n" +
-    "function hello(name) {\n" +
-    "  return `Hello, ${name}`;\n" +
-    "}\n" +
-    "console.log(hello(\"world\"));\n" +
-    "```\n" +
-    `\n` +
-    `## Footnotes\n` +
-    `\n` +
-    `Here is a sentence with a footnote.[^1]\n` +
-    `\n` +
-    `[^1]: This footnote is rendered by the markdown-it-footnote plugin.\n`,
-  "post2.md":
-    `---\n` +
-    `title: "Second Post (For Prev/Next Navigation)"\n` +
-    `date: "2026-04-10"\n` +
-    `tags: ["Notes"]\n` +
-    `hidden: false\n` +
-    `description: "A smaller post to demonstrate chronological navigation."\n` +
-    `---\n` +
-    `\n` +
-    `This post exists to demonstrate **previous/next** navigation.\n` +
-    `\n` +
-    `## A short section\n` +
-    `\n` +
-    `Markdown rendering, anchors, and TOC still work here.\n`,
-};
+// If you want local preview, run a local server (e.g. `python3 -m http.server`)
+// and open `http://localhost:8000/` instead of double-clicking `index.html`.
 
 const STORAGE_THEME = "custom_blog_theme";
 
@@ -438,17 +349,14 @@ async function fetchMarkdown(filename) {
   const url = postFilePath(filename);
 
   if (isFileProtocol()) {
-    // Try real local file reads first (works in a few permissive setups), then fall back.
+    // Try real local file reads first (works in a few permissive setups).
     try {
       const res = await fetch(url, { cache: "no-store" });
       if (res.ok) return await res.text();
     } catch {
       // ignore
     }
-
-    const embedded = EMBEDDED_POSTS[filename];
-    if (embedded) return embedded;
-    throw new Error(`Local preview cannot load ${url}.`);
+    throw new Error(`Local preview cannot load ${url}. Run a local server instead of file://.`);
   }
 
   const res = await fetch(url, { cache: "no-store" });
@@ -829,7 +737,7 @@ async function initHomePage() {
   } catch {
     status.textContent =
       isFileProtocol()
-        ? "Local file preview: only embedded demo posts are available. Deploy to GitHub Pages for live Markdown loading."
+        ? "Local file preview can't load Markdown. Run a local server (e.g. `python3 -m http.server`) or deploy to GitHub Pages."
         : "Failed to load posts.";
     posts = [];
   }
@@ -899,7 +807,7 @@ async function initHomePage() {
       const li = document.createElement("li");
       li.className = "post-item";
       li.innerHTML =
-        '<div class="muted">No posts found. If you are previewing locally, GitHub Pages deployment will load Markdown files normally.</div>';
+        '<div class="muted">No posts found.</div>';
       list.appendChild(li);
       return;
     }
