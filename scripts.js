@@ -7,7 +7,7 @@
 
    How metadata works:
    - Frontmatter is the YAML-ish block between `---` lines at the top of a .md file.
-   - Supported keys: title, date (YYYY-MM-DD), tags (array), hidden (bool), description (string).
+   - Supported keys: title, date (YYYY-MM-DD), updated (YYYY-MM-DD), tags (array), hidden (bool), description (string).
 
    Extended Markdown (no HTML required in posts):
    - Collapsible sections: use
@@ -384,6 +384,7 @@ async function loadPosts({ includeHidden = false } = {}) {
       filename,
       title: meta.title || id,
       date: meta.date || "1970-01-01",
+      updated: meta.updated || "",
       tags: Array.isArray(meta.tags) ? meta.tags : [],
       hidden: Boolean(meta.hidden),
       description: meta.description || "",
@@ -643,6 +644,108 @@ function enhanceFigures(contentRoot) {
   }
 }
 
+function initImageZoom(contentRoot) {
+  if (!contentRoot) return;
+
+  const existing = document.getElementById("imageLightbox");
+  const overlay =
+    existing ||
+    (() => {
+      const el = document.createElement("div");
+      el.id = "imageLightbox";
+      el.className = "image-lightbox";
+      el.hidden = true;
+      el.setAttribute("role", "dialog");
+      el.setAttribute("aria-modal", "true");
+      el.innerHTML = `
+        <div class="image-lightbox-backdrop" data-close="true"></div>
+        <div class="image-lightbox-content" role="document">
+          <button class="image-lightbox-close" type="button" aria-label="Close image (Esc)" title="Close (Esc)">
+            ✕
+          </button>
+          <img id="imageLightboxImg" alt="" />
+          <div id="imageLightboxCaption" class="image-lightbox-caption" hidden></div>
+        </div>
+      `;
+      document.body.appendChild(el);
+      return el;
+    })();
+
+  const lbImg = document.getElementById("imageLightboxImg");
+  const lbCap = document.getElementById("imageLightboxCaption");
+  const closeBtn = overlay.querySelector(".image-lightbox-close");
+
+  if (!lbImg || !lbCap || !closeBtn) return;
+
+  let prevFocus = null;
+
+  const open = (imgEl, captionText) => {
+    prevFocus = document.activeElement;
+
+    const src = imgEl.currentSrc || imgEl.src;
+    lbImg.src = src;
+    lbImg.alt = imgEl.alt || "";
+
+    const cap = (captionText || "").trim();
+    if (cap) {
+      lbCap.textContent = cap;
+      lbCap.hidden = false;
+    } else {
+      lbCap.textContent = "";
+      lbCap.hidden = true;
+    }
+
+    overlay.hidden = false;
+    document.body.classList.add("lightbox-open");
+    window.setTimeout(() => closeBtn.focus({ preventScroll: true }), 0);
+  };
+
+  const close = () => {
+    if (overlay.hidden) return;
+    overlay.hidden = true;
+    document.body.classList.remove("lightbox-open");
+    lbImg.removeAttribute("src");
+    lbCap.textContent = "";
+    lbCap.hidden = true;
+    if (prevFocus && typeof prevFocus.focus === "function") prevFocus.focus({ preventScroll: true });
+    prevFocus = null;
+  };
+
+  if (!overlay.dataset.bound) {
+    overlay.dataset.bound = "true";
+
+    overlay.addEventListener("click", (e) => {
+      const t = e.target;
+      if (t && t.closest && t.closest("[data-close=\"true\"]")) close();
+    });
+
+    closeBtn.addEventListener("click", close);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !overlay.hidden) {
+        e.preventDefault();
+        close();
+      }
+    });
+  }
+
+  contentRoot.addEventListener("click", (e) => {
+    const img = e.target && e.target.closest ? e.target.closest("img") : null;
+    if (!img || !contentRoot.contains(img)) return;
+    if (img.closest(".no-zoom")) return;
+
+    // If the image is wrapped in a link and it's the only content, prefer zoom.
+    const a = img.closest("a");
+    if (a && a.contains(img) && a.childNodes.length === 1) e.preventDefault();
+
+    const figure = img.closest("figure");
+    const figcaption = figure ? figure.querySelector("figcaption") : null;
+    const captionText = figcaption ? figcaption.textContent : img.alt || "";
+
+    open(img, captionText);
+  });
+}
+
 function renderMath(contentRoot) {
   if (!window.renderMathInElement) return;
   window.renderMathInElement(contentRoot, {
@@ -824,7 +927,12 @@ async function initHomePage() {
 
       const meta = document.createElement("div");
       meta.className = "muted";
-      meta.textContent = formatDate(p.date);
+      {
+        const published = formatDate(p.date);
+        const updated = p.updated ? formatDate(p.updated) : "";
+        meta.textContent =
+          updated && updated !== published ? `${published} • Updated ${updated}` : published;
+      }
       li.appendChild(meta);
 
       if (p.description) {
@@ -926,7 +1034,12 @@ async function initPostPage() {
 
   document.title = `${current.title} — Harpreet's Blog`;
   titleEl.textContent = current.title;
-  metaEl.textContent = formatDate(current.date);
+  {
+    const published = formatDate(current.date);
+    const updated = current.updated ? formatDate(current.updated) : "";
+    metaEl.textContent =
+      updated && updated !== published ? `${published} • Updated ${updated}` : published;
+  }
 
   tagsEl.replaceChildren();
   for (const t of current.tags || []) {
@@ -983,6 +1096,7 @@ async function initPostPage() {
   const body = stripLeadingTitleH1(current.content, current.title);
   contentEl.innerHTML = md.render(body);
   enhanceFigures(contentEl);
+  initImageZoom(contentEl);
 
   // Post-render enhancements.
   const headings = addHeadingAnchors(contentEl);

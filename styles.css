@@ -588,6 +588,10 @@ figure > svg {
   background: #fff;
 }
 
+:is(figure > img, .markdown img):not(.no-zoom) {
+  cursor: zoom-in;
+}
+
 :root[data-theme="dark"] figure > img,
 :root[data-theme="dark"] figure > svg {
   background: rgba(255, 255, 255, 0.04);
@@ -599,6 +603,77 @@ figcaption {
   font-size: 0.95rem;
   font-style: italic;
   text-align: center;
+}
+
+.image-lightbox[hidden] {
+  display: none;
+}
+
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+}
+
+.image-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+:root[data-theme="dark"] .image-lightbox-backdrop {
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.image-lightbox-content {
+  position: relative;
+  width: min(1100px, calc(100vw - 2rem));
+  margin: 6vh auto 0;
+  padding: 0.85rem 0.85rem 0.9rem;
+  border-radius: 16px;
+  border: 1px solid var(--rule);
+  background: var(--overlay-bg);
+  box-shadow: 0 18px 60px var(--shadow);
+}
+
+.image-lightbox-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  appearance: none;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--text);
+  border-radius: 10px;
+  padding: 0.28rem 0.5rem;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.image-lightbox-close:hover {
+  background: var(--panel);
+}
+
+#imageLightboxImg {
+  display: block;
+  max-width: 100%;
+  max-height: 78vh;
+  margin: 0 auto;
+  height: auto;
+  cursor: zoom-out;
+}
+
+.image-lightbox-caption {
+  margin-top: 0.65rem;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
+body.lightbox-open {
+  overflow: hidden;
 }
 
 blockquote {
