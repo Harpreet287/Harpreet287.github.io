@@ -295,12 +295,12 @@ function basenameWithoutExt(filename) {
 
 function postUrlFromId(id) {
   // Always link via the master template.
-  return `./posts/template.html?post=${encodeURIComponent(id)}`;
+  return `./posts/post=${encodeURIComponent(id)}`;
 }
 
 function postUrlFromIdInPostsDir(id) {
   // Links when you are already inside /posts/ (template page).
-  return `./template.html?post=${encodeURIComponent(id)}`;
+  return `./post=${encodeURIComponent(id)}`;
 }
 
 function postFilePath(filename) {
