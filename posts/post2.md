@@ -1,6 +1,6 @@
 ---
 title: "Second Post (For Prev/Next Navigation)"
-date: "2026-04-10"
+date: "2026-02-10"
 tags: ["Notes"]
 hidden: false
 description: "A smaller post to demonstrate chronological navigation."

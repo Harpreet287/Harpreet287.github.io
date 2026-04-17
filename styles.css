@@ -78,6 +78,67 @@ body {
   padding: 0 1.25rem;
 }
 
+/* Homepage: posts + archives column */
+.home-layout {
+  max-width: 1040px;
+  display: grid;
+  grid-template-columns: minmax(0, 680px) minmax(0, 220px);
+  justify-content: space-between;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .home-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.home-archives {
+  position: sticky;
+  top: 1.25rem;
+  padding-bottom: 1rem;
+  border-left: 1px solid var(--rule);
+  padding-left: 1.25rem;
+}
+
+@media (max-width: 800px) {
+  .home-archives {
+    position: static;
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+    padding-left: 0;
+    padding-top: 1.5rem;
+    margin-top: 0.5rem;
+  }
+}
+
+.home-archives-title {
+  font-size: 1rem;
+  color: var(--muted);
+  margin: 0 0 0.75rem;
+  font-weight: 600;
+}
+
+.archives-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.archives-nav li {
+  margin: 0.35rem 0;
+}
+
+.archives-nav-empty {
+  font-size: 0.95rem;
+}
+
+.archives-back {
+  margin-top: 1.5rem;
+}
+
 .wrap-wide {
   max-width: 1040px;
   margin: 0 auto;

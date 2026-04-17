@@ -289,6 +289,30 @@ function formatDate(isoDate) {
   return d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
 }
 
+function monthKeyFromIsoDate(isoDate) {
+  const s = String(isoDate || "").trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
+  return s.slice(0, 7);
+}
+
+function formatArchiveMonthLabel(monthKey) {
+  const d = new Date(`${monthKey}-01T00:00:00`);
+  if (Number.isNaN(d.getTime())) return monthKey;
+  return d.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+}
+
+function buildArchiveMonthIndex(posts) {
+  const counts = new Map();
+  for (const p of posts) {
+    const key = monthKeyFromIsoDate(p.date);
+    if (!key) continue;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+  return Array.from(counts.entries())
+    .map(([key, count]) => ({ key, count }))
+    .sort((a, b) => (a.key < b.key ? 1 : a.key > b.key ? -1 : 0));
+}
+
 function basenameWithoutExt(filename) {
   return filename.replace(/^.*\//, "").replace(/\.md$/i, "");
 }
@@ -399,6 +423,70 @@ async function loadPosts({ includeHidden = false } = {}) {
 
   items.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)); // newest first
   return items;
+}
+
+function createPostListItem(post, href = postUrlFromId(post.id)) {
+  const li = document.createElement("li");
+  li.className = "post-item";
+
+  const a = document.createElement("a");
+  a.className = "post-link";
+  a.href = href;
+  a.textContent = post.title;
+  li.appendChild(a);
+
+  const meta = document.createElement("div");
+  meta.className = "muted";
+  {
+    const published = formatDate(post.date);
+    const updated = post.updated ? formatDate(post.updated) : "";
+    meta.textContent =
+      updated && updated !== published ? `${published} • Updated ${updated}` : published;
+  }
+  li.appendChild(meta);
+
+  if (post.description) {
+    const desc = document.createElement("p");
+    desc.className = "post-excerpt";
+    desc.textContent = post.description;
+    li.appendChild(desc);
+  }
+
+  if (post.tags && post.tags.length) {
+    const tags = document.createElement("div");
+    tags.className = "post-tags";
+    for (const t of post.tags) {
+      const s = document.createElement("span");
+      s.className = "post-tag";
+      s.textContent = t;
+      tags.appendChild(s);
+    }
+    li.appendChild(tags);
+  }
+
+  return li;
+}
+
+function renderArchivesNav(navEl, posts) {
+  if (!navEl) return;
+  navEl.replaceChildren();
+
+  if (!posts.length) {
+    const li = document.createElement("li");
+    li.className = "archives-nav-empty muted";
+    li.textContent = "No posts yet.";
+    navEl.appendChild(li);
+    return;
+  }
+
+  for (const { key, count } of buildArchiveMonthIndex(posts)) {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = `./archives.html?month=${encodeURIComponent(key)}`;
+    a.textContent = `${formatArchiveMonthLabel(key)} (${count})`;
+    li.appendChild(a);
+    navEl.appendChild(li);
+  }
 }
 
 function showToast(message) {
@@ -845,6 +933,8 @@ async function initHomePage() {
     posts = [];
   }
 
+  renderArchivesNav($("#archivesNav"), posts);
+
   const allTags = Array.from(
     new Set(posts.flatMap((p) => (Array.isArray(p.tags) ? p.tags : [])))
   ).sort((a, b) => a.localeCompare(b));
@@ -916,45 +1006,7 @@ async function initHomePage() {
     }
 
     for (const p of items) {
-      const li = document.createElement("li");
-      li.className = "post-item";
-
-      const a = document.createElement("a");
-      a.className = "post-link";
-      a.href = postUrlFromId(p.id);
-      a.textContent = p.title;
-      li.appendChild(a);
-
-      const meta = document.createElement("div");
-      meta.className = "muted";
-      {
-        const published = formatDate(p.date);
-        const updated = p.updated ? formatDate(p.updated) : "";
-        meta.textContent =
-          updated && updated !== published ? `${published} • Updated ${updated}` : published;
-      }
-      li.appendChild(meta);
-
-      if (p.description) {
-        const desc = document.createElement("p");
-        desc.className = "post-excerpt";
-        desc.textContent = p.description;
-        li.appendChild(desc);
-      }
-
-      if (p.tags && p.tags.length) {
-        const tags = document.createElement("div");
-        tags.className = "post-tags";
-        for (const t of p.tags) {
-          const s = document.createElement("span");
-          s.className = "post-tag";
-          s.textContent = t;
-          tags.appendChild(s);
-        }
-        li.appendChild(tags);
-      }
-
-      list.appendChild(li);
+      list.appendChild(createPostListItem(p));
     }
   }
 
@@ -1139,11 +1191,70 @@ async function initPostPage() {
   }
 }
 
+async function initArchivesPage() {
+  const heading = $("#archivesMonthHeading");
+  const status = $("#archivesStatus");
+  const list = $("#archivesPostsList");
+
+  if (!heading || !status || !list) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const month = params.get("month");
+  const monthOk = /^\d{4}-\d{2}$/.test(month || "");
+
+  list.replaceChildren();
+  heading.textContent = "";
+  status.textContent = "Loading posts…";
+
+  let posts;
+  try {
+    posts = await loadPosts({ includeHidden: false });
+  } catch {
+    status.textContent = isFileProtocol()
+      ? "Local file preview can't load Markdown. Run a local server (e.g. `python3 -m http.server`) or deploy to GitHub Pages."
+      : "Failed to load posts.";
+    heading.textContent = "Archives";
+    document.title = "Archives — Harpreet's Blog";
+    return;
+  }
+
+  if (!monthOk) {
+    status.textContent = "Pick a month from the Archives list on the homepage.";
+    heading.textContent = "Archives";
+    document.title = "Archives — Harpreet's Blog";
+    return;
+  }
+
+  const label = formatArchiveMonthLabel(month);
+  heading.textContent = `Posts from ${label}`;
+  document.title = `${label} — Harpreet's Blog`;
+
+  const filtered = posts.filter((p) => monthKeyFromIsoDate(p.date) === month);
+
+  if (filtered.length === 0) {
+    status.textContent = "No posts this month.";
+    const li = document.createElement("li");
+    li.className = "post-item";
+    const empty = document.createElement("div");
+    empty.className = "muted";
+    empty.textContent = "No posts this month.";
+    li.appendChild(empty);
+    list.appendChild(li);
+    return;
+  }
+
+  status.textContent = `${filtered.length} post${filtered.length === 1 ? "" : "s"}`;
+  for (const p of filtered) {
+    list.appendChild(createPostListItem(p));
+  }
+}
+
 window.addEventListener("DOMContentLoaded", async () => {
   initTheme();
   initHeaderSearch();
 
   const page = document.body?.dataset?.page;
   if (page === "home") await initHomePage();
+  if (page === "archives") await initArchivesPage();
   if (page === "post") await initPostPage();
 });
