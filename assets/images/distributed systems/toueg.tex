@@ -1,16 +1,20 @@
 % Standalone TikZ figure (compile to PDF/SVG for embedding in Markdown).
 \documentclass[tikz,border=2pt]{standalone}
 \usepackage{tikz}
+\usepackage{xcolor}
 \usetikzlibrary{positioning,arrows.meta}
 
 \begin{document}
+\pagecolor{white}\color{black}
 \begin{tikzpicture}[
   node/.style={draw, circle, minimum size=7mm, inner sep=0pt, font=\small},
-  link/.style={line width=0.9pt},
-  msg0/.style={-Latex, line width=1.1pt, blue},
-  msg1/.style={-Latex, line width=1.1pt, teal!70!black},
-  msg2/.style={-Latex, line width=1.1pt, orange!85!black},
-  oneway/.style={-Latex, link}
+  link/.style={line width=0.9pt, draw=black},
+  msg0/.style={-Latex, line width=1.1pt, draw=black},
+  msg1/.style={-Latex, line width=1.1pt, draw=black},
+  msg2/.style={-Latex, line width=1.1pt, draw=black},
+  oneway/.style={-Latex, link, draw=black},
+  every node/.style={text=black},
+  every path/.style={draw=black}
 ]
 
 % Nodes (top row)

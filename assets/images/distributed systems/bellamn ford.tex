@@ -1,13 +1,15 @@
 % Directed weighted graph for Bellman-Ford example.
 \documentclass[tikz,border=2pt]{standalone}
 \usepackage{tikz}
+\usepackage{xcolor}
 \usetikzlibrary{positioning,arrows.meta}
 
 \begin{document}
+\pagecolor{white}\color{black}
 \begin{tikzpicture}[
   >=Latex,
   node/.style={draw, circle, minimum size=8mm, inner sep=0pt, align=center, font=\small},
-  edge/.style={->, line width=0.9pt},
+  edge/.style={->, line width=0.9pt, draw=black},
   w/.style={font=\small, fill=white, inner sep=1pt}
 ]
   \node[node] (src) {src};
