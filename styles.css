@@ -645,6 +645,22 @@ figure > svg {
   max-width: 100%;
   height: auto;
   margin: 0 auto;
+  box-sizing: border-box;
+  border: 1px solid var(--rule);
+  background: #fff;
+}
+
+:is(.markdown img, .markdown svg) {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Most Markdown images are the only thing inside their own paragraph. Treat those like figures. */
+.markdown p > img:only-child,
+.markdown p > svg:only-child {
+  display: block;
+  margin: 2rem auto;
+  box-sizing: border-box;
   border: 1px solid var(--rule);
   background: #fff;
 }
@@ -655,6 +671,11 @@ figure > svg {
 
 :root[data-theme="dark"] figure > img,
 :root[data-theme="dark"] figure > svg {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme="dark"] .markdown p > img:only-child,
+:root[data-theme="dark"] .markdown p > svg:only-child {
   background: rgba(255, 255, 255, 0.04);
 }
 

@@ -20,12 +20,12 @@
 */
 
 // ==== Post manifest (static hosting can't list directories) ====
-const POSTS = ["post1.md", "post2.md", "post3.md"];
+const POSTS = ["post1.md", "post2.md", "post3.md",  "post-on-distributed-system.md"];
 
 // When a site is opened via `file://`, most browsers block `fetch()` for local files.
 // If you want local preview, run a local server (e.g. `python3 -m http.server`)
 // and open `http://localhost:8000/` instead of double-clicking `index.html`.
-
+ 
 const STORAGE_THEME = "custom_blog_theme";
 
 const $ = (selector, root = document) => root.querySelector(selector);
