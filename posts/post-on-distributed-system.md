@@ -5,15 +5,26 @@ tags: ["Distributed Systems"]
 hidden: false
 description: "End-sem marathon for those who didn't study shit."
 ---
+## Introduction
+
+If you are reading it for the first time, you should be able to get overview of the concepts. If you are reading just before exam, no prior reading, you should be able to have enough knowledge to bullshit your way through the exam paper and get above average marks.
+
 ## Clocks
+
 ### Scalar Clock
+
 ### Vector Clock
+
 ### Kshemkalyani-Differential Optimization on Vector Clocks
+
 ### Strongly consistent vs Weakly Consistent
 
 ## Snapshot Algorithms
+
 ### Chandy-Lamport Algorithm
+
 ### Acharya-Badrinath Algorithm
+
 ### Lai-Yang Algorithm
 
 ## Mutex Algorithms
@@ -34,25 +45,104 @@ description: "End-sem marathon for those who didn't study shit."
 
 ### 2PC
 
+`Prepare`, `Commit` or `Abort` messages sent by coordinator.
+
+1. Coordinator asks all participants to prepare for the transaction by sending `Prepare` message. If any nodes replies NO then the process is aborted.
+2. Commit or Abort? Once all nodes reply YES or ready, then coordinator commits the transaction. Otherwise it aborts. If it fails at this step, then all nodes are stranded and don't know what to do.
+
 ### 3PC
+
+Non Blocking alternative of 2PC. Has three kinds of messages.
+`CanCommit`, `PreCommit` and `DoCommit` sent by Coordinator.
+
+1. `CanCommit`: Coordinator asks all nodes, if they are in state to commit. If everyone replies YES, then only we proceed with next phase otherwise we abort. If coordinator crashes here, then we are left with no choice but to re-elect a new Coordinator.
+2. `PreCommit`: Once everyone replies YES, we update state of coordinator to `PreCommit` and start sending messages to each node, indicating that every node is ready to commit. If coordinator crashes here after giving atleast one message, then we wait for re-election of a new coordinator. if that coordinator sees if any node has got `PreCommit` message, then it proceeds with `DoCommit`. If Timeout occurs before a node gets `PreCommit` message then the nodes automatically abort and release their locks rather than wait for a new leader.
+3. `DoCommit`: Here we actually send message to each nodes to locally proceed with commiting the transaction. Notice that this step is fault tolerant as any node that fails to get this message, due to coordinator failure still gets that message from newly elected coordinator in second step.
+
+Note, we have timeouts, precommits with re-elections which over better fault tolerance over 2PC.
+We assume non-byzantine faults in this commit protocol. Notice commit problem is subset of consensus.
 
 ## Deadlock Detection Algorithms
 
-### WFG
+### Ho-Ramamoorthy Algorithm
+
+#### One Phase Algorithm
+
+You ask each site about what resources it is holding and what processes depend on this resource.
+For example if You have site S1 and has resource R1 and process P1 and site S2 with resource R2 and process P2.
+P1(wants R1 and R2) is holding R2 and P2(wants R2 and R2) is holding R1. If you are able to draw a cycle in the nodes, then there is a deadlock.
+
+Not Robust against Network delays. As P2 might actual release R1 just a nano second after you asked it's state. To fix the delay, two phase algorithm was developed.
+
+#### Two Face Algorithm
+
+As name suggests, you have to do two iterations. First iteration is same as One Phase Algorithm.
+In two phase algorithm when controller sees a deadlock, instead of calling out for deadlock and start killing processes, it goes and checks again for any stale information/dependencies.
 
 ### Chandy-Misra-Haas Algorithm
 
+Token is spread around $(i, j, k)$ which is $(source, destination, original sender)$ by the process that is stuck.
+if $i^{th}$ gets back $(i, j, i)$ then $i$ realises that it is in deadlock and then it aborts to free up deadlock.
+
 ### Mitchel-Merritt Algorithm
+
+#### Non-Priority Version
+
+Each node has it's own private value, public value.
+Has 4 steps.
+
+1. Block: if any process p that is stuck calls for $inc(u, v)$ function. It assigns a random, unique value to that process. Initially private value equals public value.
+2. Transmit: if any process(having value $u$) that is stuck sees it's neighbour(out going edge) with value $v>u$ then it sets $u:=max(u, v)$
+3. Detect: if any process sees it's neighbour's public value $v$ equal to private and public values i.e $priv_u == pub_u$ and $priv_u==pub_v$ and $pub_u == pub_v$.
+4. Activate: Edge is removed when a process gets resource.
+
+#### Priority Version
+
+public value, public priority
+private value, private priority
+
+1. Block: remains same.
+2. Transmit: if any process(having value $u$) that is stuck sees it's neighbour(out going edge) with value $v>u$ then it sets $u:=max(u, v)$. Additionally, if $u==v$ then public priority of process is minimum of it's private priority and public priority of it's neighbour.
+3. Detect: if $u==v$ and $public_{priority} == private_{priority} \; and \; public_{priority_neighbour} == current_{public_priority} \; and \; public_{priority_neighbour} == current_{private_priority}$
+4. Activate: Same as above.
+first we settle for maximum public value, then we settle for minimum priority. maximum public value and minimum private and public value calls for detect.
 
 ## Consensus Algorithms
 
-### Agreement
-
 ### Crash Consensus Algorithm
+
+In this algorithm we assume $f$ out of $n$ nodes are faulty. They can only fail, but will never send any wrong messages.
+we will continute this algorithm for $f+1$ rounds.
+
+```cpp
+val_pi = init // some value
+for each round in [1... f]:
+  for each process p_i: 
+      for each process p_j not equal to p_i:
+        send_value_vi to p_j
+  for each process p_i:
+    val_pi:=min[all_collected_values]
+```
+
+This algorithm ensures that by the end, all nodes agree on same value. Note that, in this case, the value is minimum of all nodes that survived or minimum value of nodes that failed after their value was propagated.
+**Proof of correctness**
+
+If this algorithm is correct, we must show that
+
+1. It terminates
+2. Decision is reached on a known value i.e absence of spurious values.
+3. All nodes agree on same value.
+
+To prove $(3)$ assume that algorithm is terminated. Then let nodes `i` and `j` have values $val_i$ and $val_j$. WLOG, assume $val_i$ < $val_j$. If the value came from an alive node, say `k`,  then note that since all three nodes are alive and have communicated, then all three nodes would've agreed on minimum value.
+Only case where communication isn't complete is when `k` communicated with `i` and then died. But notice that it will force the communication to go till round $f+2$ as $f+1$ nodes would've failed.
 
 ### Byzantine Agreement
 
+In this form of agreement, we assume that faulty nodes not only crash, delay but they will send wrong values, different values to different nodes. It will simulate a malware or faulty process in an actual system. Agreement arrives iff all non faulty nodes agree on a same value.
+
 ### Lamport-Shostak-Pease Algorithm
+
+It is naive algorithm to achieve consensus in presence of byzantine adversaries. It is shown that no consensus is possible if there is one out of three faulty nodes. Hence, we need atleast $3*f+1$ nodes to get consensus.
 
 ### Phase King Algorithm
 
@@ -63,9 +153,9 @@ Run $f+1$ phases. In each phase:
 
 1. Each node broadcasts its value to every other node.
 2. Each node takes the majority i.e. $>n/2$, of received values (including its own) as the decision value.
-3. If at least $\frac{n}{2}+f$ nodes have that value, the node permanently sets its value to it.
-4. The king calculates `majority` value, call it $V_king$.
-5. If any node is confused, it overrides with $V_king$.
+3. If $> \frac{n}{2}+f$ nodes have that value, the node permanently sets its value to it.
+4. The king calculates `majority` value, call it $V_{king}$.
+5. If any node is confused, it overrides with $V_{king}$.
 6. Otherwise, it ignores the king. (we will prove that king agrees to this majority)
 
 **Discussion**
@@ -96,10 +186,10 @@ Note that since there are $f+1$ phases, it is guranteed by pigeonhole principle 
 
 **Proof of Correctness**
 
-It might not be clear still that it might be possible, during honest king's turn, that some honest nodes are confused and some aren't and that king might give different response to what sure honest nodes already believe. Let's call this case as impossibility of network split and we will prove why it would never occur.
+It might not be clear still that, during honest king's turn, some honest nodes are confused and some aren't and king might give different response than what honest nodes already believe. Let's call this case as impossibility of network split and we will prove why it would never occur.
 Let's say there are honest node `A` with vote $1$ and honest node `B` which has $0$. Note that the network is split. For honest node `A`, even if we subtract the sabotage of $f$ nodes, we still have $n/2 + 1$ honest nodes which voted for $1$. King will also see the same. It will calculate the `majority` and it arrives at same value as fixated node `A`! Hence king and all fixated [honest]nodes agree on same value. If any confused node was present, it will get overwritten by king's value. Hence network split is no more.
 
-If everyone was confused, including the good king, then good king will just pick it's default value, $0$ and once again override with it's own value.
+If everyone was confused, including the good king, then good king will just pick it's default value, $0$ and once again override with his own value.
 
 Note it can't be possible that two or more honest nodes have fixated on different values. To see why, assume nodes `A` and `B` are honest. Both of them must have atleast $n/2 + 1$ nodes in favour of their value, after excluding byzantine nodes. Total number of nodes then becomes greater than $n$.
 
