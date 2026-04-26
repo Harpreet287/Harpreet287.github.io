@@ -6,7 +6,7 @@
 \begin{document}
 \begin{tikzpicture}[
   >=Latex,
-  node/.style={draw, rounded corners=3pt, minimum width=14mm, minimum height=7mm, align=center, font=\small},
+  node/.style={draw, circle, minimum size=8mm, inner sep=0pt, align=center, font=\small},
   edge/.style={->, line width=0.9pt},
   w/.style={font=\small, fill=white, inner sep=1pt}
 ]
@@ -21,4 +21,3 @@
   \draw[edge] (d) -- node[w, midway, above] {1} (dest);
 \end{tikzpicture}
 \end{document}
-
