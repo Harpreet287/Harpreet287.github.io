@@ -56,7 +56,21 @@ description: "End-sem marathon for those who didn't study shit."
 
 ### Phase King Algorithm
 
-Let's assume $f$ adversaries are byzantine. That means they are allowed to lie, cheat, and send different messages to different IPs. If a network has $n$ nodes, $f$ are byzantine, then we would like to achieve consensus with honest nodes agreeing on the same value. Note that here success doesn't not mean a "correct" value since there is no one correct value. Success is achieved when all the honest nodes agree on a same value. Protocol succeeds if $f<n/4$.
+**Working**
+
+Network has total $n$ nodes; $f$ are Byzantine.
+Run $f+1$ phases. In each phase:
+
+1. Each node broadcasts its value to every other node.
+2. Each node takes the majority i.e. $>n/2$, of received values (including its own) as the decision value.
+3. If at least $\frac{n}{2}+f$ nodes have that value, the node permanently sets its value to it.
+4. The king calculates `majority` value, call it $V_king$.
+5. If any node is confused, it overrides with $V_king$.
+6. Otherwise, it ignores the king. (we will prove that king agrees to this majority)
+
+**Discussion**
+
+Let's assume $f$ adversaries are byzantine. That means they are allowed to lie, cheat, and send different messages to different IPs. If a network has $n$ nodes, $f$ are byzantine, then we would like to achieve consensus with honest nodes agreeing on the same value. Note that here success doesn't not mean a "correct" value since there is no one correct value. Success is achieved when all the honest nodes agree on a same value.
 
 Total votes for majority must be $n/2$. Assume all $f$ byzantine nodes are opposing the consensus. Then total votes one must have to get majority is given by
 $$
@@ -66,21 +80,24 @@ $$
 \text{Hence, Votes Required} > \frac{n}{2} + f
 \end{array}
 $$
-In other words, if you subtract votes you got by all bad guys, you still have $50\%$ honest majority.
+
+In other words, if you subtract votes you got by all bad guys, you still have $50\%$ honest majority(this is important to keep honest king in sync with honest nodes).
+Good guys are $n-f$. Votes required should be greater than $n/2+f$. Hence protocol succeeds if $f<n/4$.
+
 Our algorithm runs in $f+1$ phases. In each phase, nodes vote either $0$ or $1$. If an honest node gets a dominant majority of $n/2 + f$ then it stays fixed on it's value for the rest of the remaining phases. If however, some nodes are confused, by the end of that phase, the king overrides that node's confusion with it's own vote.
 
 Now there are two cases.
 
-If King is dishonest and sends different responses to different (confused)honest nodes, then honest nodes still are not in consensus. Some nodes have $0$ and some have $1$. If king gives each node same value (doesn't matter 0 or 1) then all honest nodes arrive at consensus, hence a byzantine king won't prefer this choice.
+If King is dishonest and sends different responses to different [confused]honest nodes, then honest nodes still are not in consensus. Some nodes have $0$ and some have $1$. If king gives each node same value (doesn't matter 0 or 1) then all honest nodes arrive at consensus, hence a byzantine king won't prefer this choice.
 
-If King is honest then notice that it sends same response to all the nodes. It will calculate the `majority`  of the votes it got as it's own value. If the king is confused itself, it will pick some default or $0$ and sends to all the nodes. If any confused node sees this, will arrive at consensus with the king.
+If King is honest then notice that it sends same response to all the nodes. It will calculate the `majority` of the votes it got as it's own value. If the king is confused itself, it will pick some default or $0$ and sends to all the nodes. If any confused node sees this, will arrive at consensus with the king.
 
 Note that since there are $f+1$ phases, it is guranteed by pigeonhole principle that one honest node gets chance to become the king and force all honest nodes to arrive at consensus with the king.
 
 **Proof of Correctness**
 
 It might not be clear still that it might be possible, during honest king's turn, that some honest nodes are confused and some aren't and that king might give different response to what sure honest nodes already believe. Let's call this case as impossibility of network split and we will prove why it would never occur.
-Let's say there is honest node `A` with vote $1$ and some node `B` which has $0$. Note that network is split. For honest node `A`, even if we subtract the sabotage of $f$ nodes, we still have $n/2 + 1$ honest nodes which are honest and voted for $1$. King will also see the same. It will calculate the majority as it arrives at same value as fixated node `A`! Hence king and all fixated nodes agree on same value. If any confused node was there, it will get overwritten by king's value. Hence network split is no more.
+Let's say there are honest node `A` with vote $1$ and honest node `B` which has $0$. Note that the network is split. For honest node `A`, even if we subtract the sabotage of $f$ nodes, we still have $n/2 + 1$ honest nodes which voted for $1$. King will also see the same. It will calculate the `majority` and it arrives at same value as fixated node `A`! Hence king and all fixated [honest]nodes agree on same value. If any confused node was present, it will get overwritten by king's value. Hence network split is no more.
 
 If everyone was confused, including the good king, then good king will just pick it's default value, $0$ and once again override with it's own value.
 
@@ -116,6 +133,7 @@ Toueg observed that instead of flooding our table $d[k]$ everywhere, we only giv
 But there's a problem, node $k$ doesn't know which nodes are reachable. Hence it sends $d[k]$ to it's neighbours who have next hop equal to $k$ and recurse. In recursion we see which all nodes(u) have next hop(directed edge) to our current node(v). If such edge exists with non-infinite distance then we forward $d[k]$ to it as well.
 
 **For example**
+
 ![Distance-table propagation](<../assets/images/distributed systems/toueg.png>)
 
 Note in the above diagram G and X can't reach $K$.
