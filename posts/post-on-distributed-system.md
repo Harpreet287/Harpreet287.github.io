@@ -83,9 +83,19 @@ Hence every node that can reach K, recieves $d[k]$.
 
 ### Bellman Ford(SPFA)
 
-Bellman Ford Algorithm is used to find single source shortest path. 
+Bellman Ford Algorithm is used to find single source shortest path. Let's call source node as $src$ and $dest$ as destination node. To simulate role of queue, each routing table broadcasts it's distance to $dest$ and if it finds the new distance is less than the previous distance.
 
-### Distributed SPFA
+**For example**
+
+![Bellman-Ford example](<../assets/images/distributed systems/bellamn ford.png>)
+
+Base Case: Here $Dest$ broadcasts it's distance from $Dest$ is 0.
+Recursion Step 1: B updates it's distance to dest as $d+weight(b, dest)$. Similarly D updates distance to $d + weight(d, dest)$.
+Recursion step 2: B broadcasts it's distance, 5 to $src$. $src$ updates it's value from infinity to 7. D broadcasts it's distance, 3 to B. B updates it's value from 5 to 3.
+Recursion step 3: Since there was change in B's value, B broadcasts distance 3 to $src$.
+Recursion step 4: $src$ updates it's value to 5.
+
+Note this is optimized version of distributed Bellaman Ford(SPFA) or Shortest Path Faster Algorithm. In Bellman Ford, each router will blindly broadcasts it's table at some set interval.
 
 ## Termination Detection
 
