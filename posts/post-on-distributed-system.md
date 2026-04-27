@@ -3,11 +3,11 @@ title: "Distributed Systems Marathon"
 date: "2026-04-26"
 tags: ["Distributed Systems"]
 hidden: false
-description: "End-sem marathon for those who didn't study shit."
+description: "One article to explain it all."
 ---
 ## Introduction
 
-If you are reading it for the first time, you should be able to get overview of the concepts. If you are reading just before exam, no prior reading, you should be able to have enough knowledge to bullshit your way through the exam paper and get above average marks.
+My own explanation to the slides and topics covered by Prof. Lini Thomas during CS3.401 Distributed Systems, Spring 2026.
 
 ## Clocks
 
