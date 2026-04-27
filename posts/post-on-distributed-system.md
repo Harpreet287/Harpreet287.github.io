@@ -13,19 +13,39 @@ If you are reading it for the first time, you should be able to get overview of 
 
 ### Scalar Clock
 
+Your timestamp is number of events you've had till now. If anyone sends you a message, piggybacked with their timestamp, then you update your time to max(your time, their time).
+
 ### Vector Clock
+
+You maintain a vector of size $n \times 1$. If your id is $i$, then $V_i[j]$ is latest timestamp you know about of process $j$. It maybe stale. If you get a message from $j$, piggy backed with entire $V_j$, you update $ \forall k \mid V_i[j] = max(V_i[k], V_j[k])$. Note that this is really inefficient.
 
 ### Kshemkalyani-Differential Optimization on Vector Clocks
 
+Optimization over vector clocks. Each node maintains two more arrays Last Sent aka LS and Last Updated aka LU. For node $i$, $LU_i[k]$ stores the timestamp of when it last sent any message to node $k$ and $LU_i[k]$ is last timestamp when $i$ got message from node $k$. Note when $j$ wants to share it's vector clock with $i$, it only shares those entries of $V_j$ such that $LU_j[k]>LS_j[i]$. In other words, changes made after it sent last message to node $i$. Hence only sends set of tuple $k, V_j[k]$.
+
 ### Strongly consistent vs Weakly Consistent
+
+A clock is strongly consistent iff we show $T(j)<T(i)$ $\iff$ event $j$ happened before event $i$.
+To prove vector clocks are strongly consistent, take two cases. One case where $i$ and $j$ happen locally(easy) and $i$ and $j$ happen on different machines and $i$ is message from that different machine.
 
 ## Snapshot Algorithms
 
-### Chandy-Lamport Algorithm
+### Chandy-Lamport for FIFO system
 
-### Acharya-Badrinath Algorithm
+Marker based snapshoting. Snapshoting process(call it leader) sends marker to each process. The reciever process snapshots it's history and marks it's channel states as empty. The reciever then broadcasts the marker to all processes in the system. Each recieving process $j$ captures the messages recieved from channel $C_{ij}$ between first time it got token from leader and time till it got token from node $i$. Assuming FIFO, $i$ will arrive after the leader's message.
 
-### Lai-Yang Algorithm
+Every node repeats the procedure and ends by sending it's local state and channel state to the leader.
+
+### Acharya-Badrinath for causal system
+
+It assumes system is causal. Leader sends the marker to every node and node captures it's snapshot and sends back to leader. We don't need to send additional markers from each node. Each node maintains SENT and RECD arrays where $SENT[i]$ means number of messages sent to $i$ and $RECD[i]$ is number of messages recieved from $i$.
+After token processing is done and snapshot state(SENT and RECD) is sent to leader, it can just compare SENT and RECD arrays of each process to find out total number of messges and their exact identities, in transit, which eventually will arrive at the nodes due to causal guarantee.
+
+### Lai-Yang Algorithm for general case
+
+Initially each process is colored `White`. A white node keeps set of messages it sent and recieved. Leader sends `Red` marker to each node. Once a node receives red message, it instantly turns red and sends it's state along with it's set of messages to the leader. Once leader gets snapshot from all the nodes, it then does set subtraction to find out which exact white messages are in transit(or in queue, but not picked up by node as it's non FIFO).
+
+Note, Lai Yang can be used where Chandy-Lamport and Acharya-Badrinath can be used and not vice versa. Chandy-Lamport can be used where Acharya-Badrinath can be used but not vice versa.
 
 ## Mutex Algorithms
 
