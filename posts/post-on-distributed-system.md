@@ -29,17 +29,31 @@ If you are reading it for the first time, you should be able to get overview of 
 
 ## Mutex Algorithms
 
-### Token Based
+### Non-Token Based
 
 #### Lamport
 
-#### MaeKawa
+Naive Algorithm. Each node has a priority queue of Lamport clocks. A node which wants to access critical section sends REQUEST message everywhere. Any node(including the one who is accessing CS) sees it's message and adds it in priority queue and replies back with REPLY message. Once it's finished executing CS broadcasts RELEASE, it removes itself from top of priority queue and next person in priority queue gets to go in.
 
 #### Ricart-Agarwala
 
-### Non-Token Based
+Optimization of Lamport. We don't need separate RELEASE messages. Just the fact that I haven't replied REPLY message implies I am using CS or in the queue of using CS. Once total number of REPLY messages is $n-1$ it is trivial that now is my turn and no one ahead of me is using CS.
+
+#### Roucairol-Carvalho Algorithm
+
+Optimization of Ricart-Agarwala. Some nodes won't ever access critical section hence asking them again and again for REPLY messages is waste. Hence, if there are no requests from any of those nodes(who don't want CS earlier too) then I can skip waiting for their REPLY and assume their REPLY and proceed with CS.
+
+### Token Based
 
 #### Suzuki-Kasami
+
+Each node has an array called as `RN`(Local Notepad). There is one token, that token has `LN`(Public Ledger) and FIFO queue of processes requesting that process.
+If a node $i$ wants a token, it broadcasts with it's entry $RN_i[i]$ to everyone. If a node $j$ sees $RN_j[i]+1==RN_i[i]$ it means that the request is fresh and updates $RN_j[i] := RN_i[i]$.
+If node $j$ was executing CS, when it is finished executing, it checks which nodes $i$ have $RN_j[i]==LN[i]+1$ i.e. which nodes sent it requests to access CS. It adds those processes in the queue and hands over token to the next element in the queue. Note that the delta of one implies that the request is fresh.
+
+#### Raymond
+
+Tree based algorithm. A node which has token, all other nodes of tree point edges toward that node. Each parent node maintains a queue of processes which of it's child(and itself) want to access the resource. That request is forwarded to the token holder. By the time token holder is finished executing, it just passes token to the next element in the queue.
 
 ## Commit Protocols -- 3PC vs 2PC
 
