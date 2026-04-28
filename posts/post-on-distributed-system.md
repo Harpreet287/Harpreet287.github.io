@@ -196,7 +196,7 @@ Run $f+1$ phases. In each phase:
 
 Let's assume $f$ adversaries are byzantine. That means they are allowed to lie, cheat, and send different messages to different IPs. If a network has $n$ nodes, $f$ are byzantine, then we would like to achieve consensus with honest nodes agreeing on the same value. Note that here success doesn't not mean a "correct" value since there is no one correct value. Success is achieved when all the honest nodes agree on a same value.
 
-Total votes for majority must be $n/2$. Assume all $f$ byzantine nodes are opposing the consensus. Then total votes one must have to get majority is given by
+Total votes for majority must be $n/2$. Assume all $f$ byzantine nodes are opposing the consensus. Then total votes one must have to get majority is given by 
 $$
 \begin{array}{l}
 \text{Total Votes} > \frac{n}{2} \\\\
