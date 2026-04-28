@@ -285,8 +285,11 @@ Note this is optimized version of distributed Bellaman Ford(SPFA) or Shortest Pa
 
 ## Termination Detection
 
-In this model of distributed system, we have two types of nodes and their functions. First is $\textit{controlling agent}$ and second is $\textit{Regular nodes}$. We might want to capture the state of system that is contributed by states of each nodes present in the system. Any node may fire $\textit{idle}$ signal to indicate that it is idle.
-Consider the situation such that we have two nodes A, B. A sends B a message and declares it is idle. While message is in transit, B also fires idle signal. While both nodes declare that they are idle to the controlling agent, infact B is not idle. To fix this, we have the following algorithm.
+In this model of a distributed system, there are two types of nodes: a $\textit{controlling agent}$ and $\textit{regular nodes}$. The global state of the system is determined by the combined states of all nodes. Any node may send an idle signal to indicate that it is currently inactive.
+
+Consider a scenario with two nodes, A and B. Node A sends a message to B and then declares itself idle. While the message is still in transit, node B also sends an idle signal. As a result, both nodes report to the controlling agent that they are idle, even though B is not truly idle (since it is about to receive a message).
+
+To address this inconsistency, we introduce the following algorithm:
 
 ### Weight Throwing Algorithm
 
