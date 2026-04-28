@@ -1,7 +1,7 @@
 ---
 title: "Distributed Systems Marathon"
 date: "2026-04-26"
-tags: ["Distributed Systems"]
+tags: ["Distributed Systems", "IIITH", "Course-Work"]
 hidden: false
 description: "One article to explain it all."
 ---
