@@ -1,0 +1,44 @@
+name: Update Contributor Credits
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  update:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Update contributions DB
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SITE_OWNER: harpreet287
+        run: node tools/update-contributions-from-pr.mjs
+
+      - name: Commit DB update
+        run: |
+          if git diff --quiet -- data/contributions.json; then
+            echo "No DB changes."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/contributions.json
+          git commit -m "Update contributor credits (PR #${{ github.event.pull_request.number }})"
+          git push
+

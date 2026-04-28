@@ -22,6 +22,13 @@
 // ==== Post manifest (static hosting can't list directories) ====
 const POSTS = ["post1.md", "post2.md", "post3.md",  "post-on-distributed-system.md"];
 
+// ==== Contributions (GitHub PR-based) ====
+// This site is static, so proposals + review flow runs through GitHub pull requests.
+// Contributor credit is tracked in `data/contributions.json`, auto-updated by a GitHub Action on PR merge.
+const SITE_REPO = "harpreet287/harpreet287.github.io";
+const SITE_OWNER = "harpreet287";
+const SITE_BRANCH = "main";
+
 // When a site is opened via `file://`, most browsers block `fetch()` for local files.
 // If you want local preview, run a local server (e.g. `python3 -m http.server`)
 // and open `http://localhost:8000/` instead of double-clicking `index.html`.
@@ -289,6 +296,12 @@ function formatDate(isoDate) {
   return d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
 }
 
+function formatDateTime(isoDateTime) {
+  const d = new Date(isoDateTime);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+}
+
 function monthKeyFromIsoDate(isoDate) {
   const s = String(isoDate || "").trim();
   if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
@@ -331,6 +344,186 @@ function postFilePath(filename) {
   // On template.html, posts are in the same folder. On index.html, they are in /posts/.
   const page = document.body?.dataset?.page || "home";
   return page === "post" ? `./${filename}` : `./posts/${filename}`;
+}
+
+function siteFilePath(relPath) {
+  // On /posts/template.html we need to go up one directory for site-wide assets.
+  const page = document.body?.dataset?.page || "home";
+  const rel = String(relPath || "").replace(/^\.?\//, "");
+  return page === "post" ? `../${rel}` : `./${rel}`;
+}
+
+async function fetchJson(url) {
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Failed to load ${url} (${res.status})`);
+  return await res.json();
+}
+
+async function fetchContributionsDb() {
+  return await fetchJson(siteFilePath("data/contributions.json"));
+}
+
+async function githubApi(pathname) {
+  const url = `https://api.github.com${pathname}`;
+  const res = await fetch(url, {
+    headers: { Accept: "application/vnd.github+json" },
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`GitHub API failed: ${pathname} (${res.status})`);
+  return await res.json();
+}
+
+async function listOpenPullRequests() {
+  const [owner, repo] = SITE_REPO.split("/");
+  return await githubApi(`/repos/${owner}/${repo}/pulls?state=open&per_page=50`);
+}
+
+async function listPullRequestFiles(prNumber) {
+  const [owner, repo] = SITE_REPO.split("/");
+  const out = [];
+  let page = 1;
+  while (true) {
+    const batch = await githubApi(
+      `/repos/${owner}/${repo}/pulls/${prNumber}/files?per_page=100&page=${page}`
+    );
+    if (!Array.isArray(batch) || batch.length === 0) break;
+    out.push(...batch);
+    if (batch.length < 100) break;
+    page += 1;
+  }
+  return out;
+}
+
+async function fetchLastUpdatedForPost(filename) {
+  const [owner, repo] = SITE_REPO.split("/");
+  const clean = String(filename || "").replace(/^.*\//, "");
+  const path = `posts/${clean}`;
+  const commits = await githubApi(
+    `/repos/${owner}/${repo}/commits?path=${encodeURIComponent(path)}&per_page=1`
+  );
+  const first = Array.isArray(commits) ? commits[0] : null;
+  return (
+    String(first?.commit?.committer?.date || "") ||
+    String(first?.commit?.author?.date || "")
+  );
+}
+
+function isPostMarkdownPath(filePath) {
+  return /^posts\/[^/]+\.md$/i.test(String(filePath || ""));
+}
+
+async function mapLimit(items, limit, fn) {
+  const results = new Array(items.length);
+  let cursor = 0;
+  const workers = Array.from({ length: Math.min(limit, items.length) }, () =>
+    (async () => {
+      while (true) {
+        const i = cursor++;
+        if (i >= items.length) return;
+        results[i] = await fn(items[i], i);
+      }
+    })()
+  );
+  await Promise.all(workers);
+  return results;
+}
+
+function githubRepoUrl() {
+  return `https://github.com/${SITE_REPO}`;
+}
+
+function githubEditUrlForPost(filename) {
+  return `${githubRepoUrl()}/edit/${encodeURIComponent(SITE_BRANCH)}/posts/${encodeURIComponent(
+    filename
+  )}`;
+}
+
+function githubPullsSearchUrlForPost(filename) {
+  const q = `is:pr is:open path:posts/${filename}`;
+  return `${githubRepoUrl()}/pulls?q=${encodeURIComponent(q)}`;
+}
+
+function contributionsQueueUrlForPost(postId) {
+  return `${siteFilePath("contributions.html")}?post=${encodeURIComponent(postId)}`;
+}
+
+function formatPct(p) {
+  const v = Number(p) || 0;
+  if (v >= 10) return `${v.toFixed(0)}%`;
+  if (v >= 1) return `${v.toFixed(1)}%`;
+  return `${v.toFixed(2)}%`;
+}
+
+function ContributorItem(contributor) {
+  const item = document.createElement("span");
+  item.className = "contributor-item";
+
+  const a = document.createElement("a");
+  a.href = contributor.url;
+  a.target = "_blank";
+  a.rel = "noreferrer";
+  a.textContent = contributor.login;
+  item.appendChild(a);
+
+  const pct = document.createElement("span");
+  pct.className = "contributor-pct";
+  pct.textContent = ` (${formatPct(contributor.pct)})`;
+  item.appendChild(pct);
+
+  return item;
+}
+
+function ContributorList(listEl, contributors) {
+  listEl.replaceChildren(...contributors.map(ContributorItem));
+}
+
+function githubIcon() {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 16 16");
+  svg.setAttribute("width", "16");
+  svg.setAttribute("height", "16");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute(
+    "d",
+    "M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+  );
+  path.setAttribute("fill", "currentColor");
+  svg.appendChild(path);
+  return svg;
+}
+
+function createActionIcon({ href, icon, label, external = false }) {
+  const a = document.createElement("a");
+  a.className = "post-action-icon";
+  a.href = href;
+  a.title = label;
+  a.setAttribute("aria-label", label);
+  if (external) {
+    a.target = "_blank";
+    a.rel = "noreferrer";
+  }
+
+  if (typeof icon === "string") {
+    const glyph = document.createElement("span");
+    glyph.className = "post-action-icon-glyph";
+    glyph.textContent = icon;
+    glyph.setAttribute("aria-hidden", "true");
+    a.appendChild(glyph);
+  } else if (icon instanceof Node) {
+    a.appendChild(icon);
+  }
+  return a;
+}
+
+function ActionIcons({ proposeHref, pendingHref, githubHref }) {
+  return [
+    createActionIcon({ href: proposeHref, icon: "✎", label: "Propose edit", external: true }),
+    createActionIcon({ href: pendingHref, icon: "⚠", label: "Pending PRs" }),
+    createActionIcon({ href: githubHref, icon: githubIcon(), label: "View on GitHub", external: true }),
+  ];
 }
 
 function parseFrontmatter(markdownText) {
@@ -1059,8 +1252,12 @@ function stripLeadingTitleH1(markdownBody, title) {
 async function initPostPage() {
   const titleEl = $("#postTitle");
   const metaEl = $("#postMeta");
+  const updatedEl = $("#postUpdated");
   const tagsEl = $("#postTags");
   const contentEl = $("#postContent");
+  const actionsEl = $("#postActions");
+  const contributorsSection = $("#postContributors");
+  const contributorsList = $("#postContribList");
   const tocDesktop = $("#toc");
   const navPrev = $("#navPrev");
   const navNext = $("#navNext");
@@ -1088,9 +1285,25 @@ async function initPostPage() {
   titleEl.textContent = current.title;
   {
     const published = formatDate(current.date);
-    const updated = current.updated ? formatDate(current.updated) : "";
-    metaEl.textContent =
-      updated && updated !== published ? `${published} • Updated ${updated}` : published;
+    metaEl.textContent = published;
+
+    if (updatedEl) updatedEl.hidden = true;
+    if (updatedEl) {
+      const applyUpdatedLabel = (label) => {
+        const s = String(label || "").trim();
+        if (!s) return;
+        updatedEl.textContent = `Last update: ${s}`;
+        updatedEl.hidden = false;
+      };
+
+      if (!isFileProtocol()) {
+        fetchLastUpdatedForPost(current.filename)
+          .then((iso) => applyUpdatedLabel(formatDateTime(iso)))
+          .catch(() => applyUpdatedLabel(current.updated ? formatDate(current.updated) : ""));
+      } else {
+        applyUpdatedLabel(current.updated ? formatDate(current.updated) : "");
+      }
+    }
   }
 
   tagsEl.replaceChildren();
@@ -1099,6 +1312,19 @@ async function initPostPage() {
     s.className = "post-tag";
     s.textContent = t;
     tagsEl.appendChild(s);
+  }
+
+  if (actionsEl) {
+    actionsEl.replaceChildren();
+    actionsEl.append(
+      ...ActionIcons({
+        proposeHref: githubEditUrlForPost(current.filename),
+        pendingHref: contributionsQueueUrlForPost(current.id),
+        githubHref: `${githubRepoUrl()}/blob/${encodeURIComponent(SITE_BRANCH)}/posts/${encodeURIComponent(
+          current.filename
+        )}`,
+      })
+    );
   }
 
   // Load markdown renderer + plugins + KaTeX + syntax highlighting without blocking the initial HTML.
@@ -1162,6 +1388,39 @@ async function initPostPage() {
   renderMath(contentEl);
 
   initProgressBar(document.querySelector("article.post"));
+
+  // Contributors (loaded from static DB).
+  if (contributorsSection && contributorsList) {
+    try {
+      const db = await fetchContributionsDb();
+      const article = db?.articles?.[current.id];
+      const credits = article?.credits || {};
+      let entries = Object.entries(credits)
+        .map(([login, units]) => ({ login, units: Number(units) || 0 }))
+        .filter((e) => e.login && e.units > 0);
+
+      // If a new post hasn't been bootstrapped into the DB yet, still show a sensible default.
+      if (entries.length === 0) entries = [{ login: SITE_OWNER, units: 1 }];
+      entries.sort((a, b) => b.units - a.units);
+
+      const total = entries.reduce((s, e) => s + e.units, 0) || 1;
+      const contributors = entries.map((e) => ({
+        login: e.login,
+        units: e.units,
+        pct: (e.units / total) * 100,
+        url: `https://github.com/${encodeURIComponent(e.login)}`,
+      }));
+
+      if (contributors.length) {
+        contributorsSection.hidden = false;
+        ContributorList(contributorsList, contributors);
+      } else {
+        contributorsSection.hidden = true;
+      }
+    } catch {
+      contributorsSection.hidden = true;
+    }
+  }
 
   // Handle deep links after IDs are created.
   if (window.location.hash) {
@@ -1249,6 +1508,121 @@ async function initArchivesPage() {
   }
 }
 
+async function initContributionsPage() {
+  const status = $("#contribStatus");
+  const list = $("#contribList");
+  const filters = $("#contribFilters");
+
+  if (!status || !list) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const filterPost = (params.get("post") || "").trim();
+
+  list.replaceChildren();
+  status.textContent = "Loading pull requests…";
+
+  if (filters) {
+    filters.replaceChildren();
+    filters.hidden = true;
+  }
+
+  let pulls;
+  try {
+    pulls = await listOpenPullRequests();
+  } catch (e) {
+    status.textContent = "Failed to load pull requests from GitHub.";
+    return;
+  }
+
+  if (!Array.isArray(pulls) || pulls.length === 0) {
+    status.textContent = "No pending contributions.";
+    return;
+  }
+
+  // Enrich PRs with touched posts/*.md files.
+  const enriched = await mapLimit(pulls, 4, async (pr) => {
+    const files = await listPullRequestFiles(pr.number).catch(() => []);
+    const postFiles = files
+      .filter((f) => isPostMarkdownPath(f.filename))
+      .map((f) => ({
+        filename: String(f.filename).replace(/^posts\//, ""),
+        postId: basenameWithoutExt(String(f.filename)),
+        additions: Number(f.additions) || 0,
+        deletions: Number(f.deletions) || 0,
+      }));
+    return { pr, postFiles };
+  });
+
+  let items = enriched.filter((x) => x.postFiles && x.postFiles.length > 0);
+  if (filterPost) items = items.filter((x) => x.postFiles.some((f) => f.postId === filterPost));
+
+  if (filters && filterPost) {
+    filters.hidden = false;
+    const tag = document.createElement("span");
+    tag.className = "contrib-badge";
+    tag.textContent = `Filter: ${filterPost}`;
+    filters.appendChild(tag);
+
+    const clear = document.createElement("a");
+    clear.className = "text-button";
+    clear.href = siteFilePath("contributions.html");
+    clear.textContent = "Clear";
+    filters.appendChild(clear);
+  }
+
+  if (items.length === 0) {
+    status.textContent = filterPost
+      ? `No pending contributions for ${filterPost}.`
+      : "No pending contributions.";
+    return;
+  }
+
+  status.textContent = `${items.length} open pull request${items.length === 1 ? "" : "s"}`;
+
+  for (const { pr, postFiles } of items) {
+    const card = document.createElement("article");
+    card.className = "contrib-card";
+
+    const title = document.createElement("h2");
+    title.className = "contrib-card-title";
+    const a = document.createElement("a");
+    a.href = pr.html_url;
+    a.target = "_blank";
+    a.rel = "noreferrer";
+    a.textContent = `#${pr.number} ${pr.title || "Pull request"}`;
+    title.appendChild(a);
+    card.appendChild(title);
+
+    const meta = document.createElement("div");
+    meta.className = "contrib-meta";
+    const author = pr.user?.login ? pr.user.login : "unknown";
+    const authorLink = document.createElement("a");
+    authorLink.href = `https://github.com/${encodeURIComponent(author)}`;
+    authorLink.target = "_blank";
+    authorLink.rel = "noreferrer";
+    authorLink.textContent = author;
+    meta.appendChild(document.createTextNode("By "));
+    meta.appendChild(authorLink);
+    if (pr.updated_at) {
+      meta.appendChild(document.createTextNode(` • Updated ${new Date(pr.updated_at).toLocaleString()}`));
+    }
+    card.appendChild(meta);
+
+    const badges = document.createElement("div");
+    badges.className = "contrib-badges";
+    for (const f of postFiles) {
+      const badge = document.createElement("a");
+      badge.className = "contrib-badge";
+      badge.href = postUrlFromId(f.postId);
+      badge.textContent = `${f.postId} (+${f.additions} −${f.deletions})`;
+      badges.appendChild(badge);
+    }
+    card.appendChild(badges);
+
+    list.appendChild(card);
+  }
+}
+
 window.addEventListener("DOMContentLoaded", async () => {
   initTheme();
   initHeaderSearch();
@@ -1257,4 +1631,5 @@ window.addEventListener("DOMContentLoaded", async () => {
   if (page === "home") await initHomePage();
   if (page === "archives") await initArchivesPage();
   if (page === "post") await initPostPage();
+  if (page === "contributions") await initContributionsPage();
 });

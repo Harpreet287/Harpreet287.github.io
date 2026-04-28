@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "repo": "harpreet287/harpreet287.github.io",
+  "updated_at": "2026-04-28T12:35:25.548Z",
+  "articles": {
+    "post-on-abstract-algebra": {
+      "id": "post-on-abstract-algebra",
+      "filename": "post-on-abstract-algebra.md",
+      "credits": {
+        "harpreet287": 12
+      },
+      "merges": [],
+      "updated_at": ""
+    },
+    "post-on-distributed-system": {
+      "id": "post-on-distributed-system",
+      "filename": "post-on-distributed-system.md",
+      "credits": {
+        "harpreet287": 191
+      },
+      "merges": [],
+      "updated_at": ""
+    },
+    "post1": {
+      "id": "post1",
+      "filename": "post1.md",
+      "credits": {
+        "harpreet287": 38
+      },
+      "merges": [],
+      "updated_at": ""
+    },
+    "post2": {
+      "id": "post2",
+      "filename": "post2.md",
+      "credits": {
+        "harpreet287": 3
+      },
+      "merges": [],
+      "updated_at": ""
+    },
+    "post3": {
+      "id": "post3",
+      "filename": "post3.md",
+      "credits": {
+        "harpreet287": 38
+      },
+      "merges": [],
+      "updated_at": ""
+    }
+  }
+}

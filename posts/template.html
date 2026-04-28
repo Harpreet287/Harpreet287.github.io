@@ -64,6 +64,10 @@
       <div class="post-layout">
         <article class="post">
           <header class="post-header">
+            <div class="post-header-top">
+              <div id="postUpdated" class="post-updated muted" aria-label="Last update" hidden></div>
+              <div id="postActions" class="post-action-icons" aria-label="Post actions"></div>
+            </div>
             <h1 id="postTitle"></h1>
             <div id="postMeta" class="muted"></div>
             <div id="postTags" class="post-tags" aria-label="Post tags"></div>
@@ -71,6 +75,14 @@
 
           <!-- Markdown is rendered + injected into #postContent by scripts.js -->
           <div id="postContent" class="markdown"></div>
+
+          <section id="postContributors" class="post-contributors" hidden>
+            <h2 class="visually-hidden">Contributors</h2>
+            <div class="post-contributors-row">
+              <div class="post-contributors-label">Contributors:</div>
+              <div id="postContribList" class="post-contrib-list" aria-label="Contributors list"></div>
+            </div>
+          </section>
 
           <footer class="post-footer">
             <nav class="post-pagination" aria-label="Post navigation">
@@ -111,7 +123,7 @@
 
     <footer class="site-footer">
       <div class="wrap-wide">
-        <span>© 2026 Harpreet's blog</span>
+        <span>© 2026 Harpreet's blog • <a href="../contributions.html">Contributions</a></span>
       </div>
     </footer>
   </body>

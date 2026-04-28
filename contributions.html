@@ -4,23 +4,22 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
-    <title>Archives — Harpreet's Blog</title>
+    <title>Contributions — Harpreet's Blog</title>
 
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/fonts.css"
     />
-
     <link rel="stylesheet" href="./styles.css" />
-
     <script defer src="./scripts.js"></script>
   </head>
 
-  <body data-page="archives">
+  <body data-page="contributions">
     <header class="site-header">
-      <div class="wrap header-row">
+      <div class="wrap-wide header-row">
         <a class="site-title" href="./index.html">Harpreet's Blog</a>
         <div class="header-actions">
+          <a class="text-button" href="./index.html">Posts</a>
           <button
             id="themeToggle"
             class="icon-button"
@@ -34,21 +33,19 @@
       </div>
     </header>
 
-    <main class="wrap" id="content">
-      <h1 id="archivesPageTitle" class="visually-hidden">Archives</h1>
-      <h2 id="archivesMonthHeading"></h2>
-      <div id="archivesStatus" class="muted" role="status" aria-live="polite"></div>
+    <main class="wrap-wide" id="content">
+      <h1>Pending contributions</h1>
+      <div id="contribStatus" class="muted" role="status" aria-live="polite"></div>
 
-      <ol id="archivesPostsList" class="post-list" aria-live="polite"></ol>
-
-      <p class="archives-back muted">
-        <a href="./index.html">← All posts</a>
-      </p>
+      <div id="contribFilters" class="contrib-filters" hidden></div>
+      <div id="contribList" class="contrib-list" aria-live="polite"></div>
     </main>
 
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+
     <footer class="site-footer">
-      <div class="wrap">
-        <span>© 2026 Harpreet's blog • <a href="./contributions.html">Contributions</a></span>
+      <div class="wrap-wide">
+        <span>© 2026 Harpreet's blog</span>
       </div>
     </footer>
   </body>
