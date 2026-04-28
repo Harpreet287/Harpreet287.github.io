@@ -1,7 +1,7 @@
 {
   "version": 1,
   "repo": "harpreet287/harpreet287.github.io",
-  "updated_at": "2026-04-28T12:35:25.548Z",
+  "updated_at": "2026-04-28T13:15:49.788Z",
   "articles": {
     "post-on-abstract-algebra": {
       "id": "post-on-abstract-algebra",
@@ -16,10 +16,22 @@
       "id": "post-on-distributed-system",
       "filename": "post-on-distributed-system.md",
       "credits": {
-        "harpreet287": 191
+        "harpreet287": 191,
+        "raveeshvyas": 2
       },
-      "merges": [],
-      "updated_at": ""
+      "merges": [
+        {
+          "pr": 2,
+          "title": "Testing contributions",
+          "url": "https://github.com/Harpreet287/Harpreet287.github.io/pull/2",
+          "author": "raveeshvyas",
+          "merged_at": "2026-04-28T13:15:34Z",
+          "additions": 1,
+          "deletions": 1,
+          "units": 2
+        }
+      ],
+      "updated_at": "2026-04-28T13:15:49.788Z"
     },
     "post1": {
       "id": "post1",
