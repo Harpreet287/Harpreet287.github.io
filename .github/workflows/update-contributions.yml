@@ -1,8 +1,14 @@
 name: Update Contributor Credits
 
 on:
-  pull_request:
+  pull_request_target:
     types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Merged PR number to (re)apply to data/contributions.json"
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -10,13 +16,20 @@ permissions:
 
 jobs:
   update:
-    if: github.event.pull_request.merged == true
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: true
+          # Security: for pull_request_target, never check out untrusted PR head.
+          # After merge, the base branch already contains the merged changes.
+          ref: ${{ github.event.pull_request.base.ref || github.event.repository.default_branch }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -26,6 +39,7 @@ jobs:
       - name: Update contributions DB
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ inputs.pr_number }}
           SITE_OWNER: harpreet287
         run: node tools/update-contributions-from-pr.mjs
 
@@ -39,6 +53,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/contributions.json
-          git commit -m "Update contributor credits (PR #${{ github.event.pull_request.number }})"
+          git commit -m "Update contributor credits (PR #${{ github.event.pull_request.number || inputs.pr_number }})"
           git push
-

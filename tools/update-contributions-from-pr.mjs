@@ -15,6 +15,7 @@ const OWNER_LOGIN = process.env.SITE_OWNER || "harpreet287";
 const REPO = process.env.GITHUB_REPOSITORY || process.env.SITE_REPO || "";
 const TOKEN = process.env.GITHUB_TOKEN || "";
 const EVENT_PATH = process.env.GITHUB_EVENT_PATH || "";
+const PR_NUMBER_ENV = process.env.PR_NUMBER || "";
 
 function requiredEnv(name, value) {
   if (!value) throw new Error(`Missing required env: ${name}`);
@@ -62,11 +63,26 @@ async function readLocalMarkdownBaseUnits(filename) {
   return computeBaseUnitsForMarkdown(text);
 }
 
-async function main() {
-  requiredEnv("GITHUB_EVENT_PATH", EVENT_PATH);
+async function loadMergedPullRequestEvent() {
+  if (EVENT_PATH) {
+    const event = JSON.parse(await fs.readFile(EVENT_PATH, "utf8"));
+    return { event, pr: event?.pull_request || null };
+  }
 
-  const event = JSON.parse(await fs.readFile(EVENT_PATH, "utf8"));
-  const pr = event?.pull_request;
+  const prNumber = Number(PR_NUMBER_ENV);
+  if (!Number.isFinite(prNumber) || prNumber <= 0) {
+    throw new Error("Missing required env: GITHUB_EVENT_PATH (or PR_NUMBER for workflow_dispatch)");
+  }
+
+  const repoFull = requiredEnv("GITHUB_REPOSITORY", REPO);
+  const [owner, repo] = String(repoFull).split("/");
+  if (!owner || !repo) throw new Error(`Could not determine repository from ${repoFull}`);
+  const pr = await ghApi(`/repos/${owner}/${repo}/pulls/${prNumber}`);
+  return { event: { repository: { full_name: repoFull } }, pr };
+}
+
+async function main() {
+  const { event, pr } = await loadMergedPullRequestEvent();
   const merged = Boolean(pr?.merged);
   if (!merged) {
     process.stdout.write("PR not merged; skipping.\n");
@@ -127,4 +143,3 @@ main().catch((err) => {
   process.stderr.write(String(err?.stack || err) + "\n");
   process.exit(1);
 });
-
