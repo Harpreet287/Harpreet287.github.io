@@ -146,6 +146,24 @@ async function ensurePostDeps() {
       "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js",
     ], { id: "katex_autorender", timeoutMs: 6000 });
   }
+
+  // KaTeX copy-tex (copies original LaTeX when selecting/copying rendered math).
+  // This contrib script doesn't expose a stable global; just best-effort load once.
+  if (!document.getElementById("katex_copytex")) {
+    const sources = [
+      "https://unpkg.com/katex@0.16.9/dist/contrib/copy-tex.min.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/copy-tex.min.js",
+      "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js",
+    ];
+    for (const src of sources) {
+      try {
+        await loadExternalScript(src, { id: "katex_copytex", timeoutMs: 6000 });
+        break;
+      } catch {
+        // try next
+      }
+    }
+  }
 }
 
 function isFileProtocol() {

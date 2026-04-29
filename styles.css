@@ -7,6 +7,7 @@
   --link: #2b59c3;
   --link-underline: rgba(43, 89, 195, 0.25);
   --link-underline-hover: rgba(43, 89, 195, 0.7);
+  --link-visited: #6f42c1;
 
   --panel: rgba(0, 0, 0, 0.03);
   --shadow: rgba(0, 0, 0, 0.12);
@@ -15,6 +16,9 @@
   --overlay-bg: rgba(253, 253, 253, 0.85);
 
   --progress: #2b59c3;
+
+  --selection-bg: #b9ddff;
+  --selection-text: #0b0f14;
 }
 
 :root[data-theme="dark"] {
@@ -26,6 +30,7 @@
   --link: #8ab4f8;
   --link-underline: rgba(138, 180, 248, 0.28);
   --link-underline-hover: rgba(138, 180, 248, 0.75);
+  --link-visited: #c58af9;
 
   --panel: rgba(255, 255, 255, 0.06);
   --shadow: rgba(0, 0, 0, 0.42);
@@ -34,10 +39,23 @@
   --overlay-bg: rgba(15, 17, 21, 0.88);
 
   --progress: #8ab4f8;
+
+  --selection-bg: #b9ddff;
+  --selection-text: #0b0f14;
 }
 
 * {
   box-sizing: border-box;
+}
+
+::selection {
+  background: var(--selection-bg);
+  color: var(--selection-text);
+}
+
+::-moz-selection {
+  background: var(--selection-bg);
+  color: var(--selection-text);
 }
 
 html {
@@ -599,6 +617,10 @@ a:hover {
 
 .contributor-item a {
   border-bottom: 0;
+}
+
+.contributor-item a:visited {
+  color: var(--link-visited);
 }
 
 .contributor-item a:hover {

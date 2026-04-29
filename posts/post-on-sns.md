@@ -205,11 +205,95 @@ HTTP(Application Layer) built over SSL/TLS becomes HTTPS which establishes secur
 
 TLS/SSL encrypts Forms(HTML), URLs(the exact specific page), Contents, Cookies(Web), Headers(HTTP).
 
-## Intellectual Property
-
 ## Secure Electronic Transaction
 
+SET is not a payment system.
+It provides Integrity via HMAC precisely RSA encryption with SHA-1, Authentication(both Customer and Merchant)using x.509v3 digial certificates, Confidentiality using conventional DES encryption.
+
+Sequence of messages follows the following order:
+
+1. Customer opens account and get certificate.
+2. Merchant have their certificates.
+3. Customer places an order.
+4. Merchant verfies itself.
+5. Order and Payment are sent.
+6. Merchant requests payment authorization.
+7. Bank replies with authentication code.
+8. Merchant responds back to customer with confirmed order.
+9. Merchant requests payment.
+10. Bank deducts money from customer and pays the merchant.
+
+Types of messages are:
+
+1. Pinit (Request, Response): Initiate transaction from customer and merchant is verfied.
+2. P (Request, Response): Customer sends order and payment information to the customer. Merchant ships the goods.
+3. Auth (Request, Response): Merchant authorizes with bank to see if transaction is possible.
+4. Cap (Request, Response): Merchant requests and receives the payment from the bank.
+5. Inq (Request, Response): Customer inquires about the status of the transaction and goods.
+
+## Intellectual Property
+
+Copyright: Someone copying your production.
+Trade Secrets: Your own in house stuff. Might make you stressed when released.
+Patents: Your own inventions. Examples like cryptographic algorithms.
+TradeMarks: Your label name, icon that is your brand's image.
+
+TRIPS: Trade Related aspects of Intellectual Property Rights (massive rule book run by world trade organization.)
+
 ## Digital Rights Management
+
+DRM has 4 principal users:
+
+1. Consumers: Obviously us.
+2. Distributors: Like Netflix.
+3. Creators: The ones who own the product.
+4. Clearing House: The one who pays distributors and creators. Logs license for each consumer.
+
+It has following main components:
+
+1. Right holders
+2. Consumers
+3. Service Providers
+4. Identity Management
+5. Identity Management Service
+6. Rights Management
+7. Distribution Management
+8. Security Module
+9. Billing/Payment Function
+10. Delivery Functions
+
+AKD's paper has 4 phases:
+
+1. Registration Phase
+2. Package Phase
+3. Content Key Acquisition Phase
+4. Password and Biometric Update phase
+
+Registration Phase:
+
+You enter your password. Fuzzy extractor generates $\sigma$ and $\tau$.
+We compute hashed digest W from ID, Password, $\sigma$ and random $r$.
+Send ID, W to License Server.
+
+Package Phase:
+
+Content is encrypted using symmetric key, sent to content server and key to license server.
+
+Content Key Acquisiton Phase:
+
+1. User authenticates. If authentication was successful we send timestamp and unique master key to disguise what movie you want to watch.
+2. Server check. It checks for time stamp. Finds your identity and unmask movie we want. Then sends movie to us with OTP of another mask.
+3. Phone Check. After receiving the message, it checks for timestamp. Then checks for key, decrypts it. Then use C3 mask to authenticate any tampering.
+
+Password Reset Phase:
+
+1. Enter previous password and biometric.
+2. Verify if biometric and password digest matches.
+3. Replace with new biometric and password. Generates fresh W. and a new verifier hash.
+
+User anonymity maintained using Encryption of ID with random nonce u.
+Authentication using using C1, C3 hash digests.
+Replay resistance to check if $|T_1-T|<\Delta T$
 
 ## Intrusion Prevention and Detection
 
