@@ -20,7 +20,7 @@
 */
 
 // ==== Post manifest (static hosting can't list directories) ====
-const POSTS = ["post1.md", "post2.md", "post3.md",  "post-on-distributed-system.md", "post-on-sns.md"];
+const POSTS = ["post1.md", "post2.md", "post3.md",  "post-on-distributed-system.md", "post-on-sns.md", "post-on-data-systems.md"];
 
 // ==== Contributions (GitHub PR-based) ====
 // This site is static, so proposals + review flow runs through GitHub pull requests.
